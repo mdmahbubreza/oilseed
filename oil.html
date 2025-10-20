@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krishi Shield - Oilseeds Trading</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide-react@0.292.0/dist/lucide-react.js"></script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    
+    <!-- Recharts for Candlestick Chart -->
+    <script src="https://unpkg.com/recharts/umd/Recharts.min.js"></script>
+
+    <style>
+        :root {
+            /* Light Mode Colors (as per design system) */
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 222.2 84% 4.9%;
+            --primary: 142 86% 28%;
+            --primary-foreground: 0 0% 100%;
+            --secondary: 210 40% 96.1%;
+            --secondary-foreground: 222.2 47.4% 11.2%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 214.3 31.8% 91.4%;
+            --muted: 210 40% 96.1%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --accent: 210 40% 96.1%;
+            --accent-foreground: 222.2 47.4% 11.2%;
+            --success: 142 76% 36%; /* Brighter Green */
+        }
+
+        /* Basic styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .recharts-tooltip-cursor {
+            stroke-dasharray: 3 3;
+        }
+        .recharts-cartesian-axis-tick-value {
+             font-family: 'Inter', sans-serif;
+             font-size: 12px;
+        }
+        .recharts-tooltip-wrapper {
+            outline: none !important;
+        }
+        /* Additional animation classes for toast */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translate3d(0, -20%, 0); }
+            to { opacity: 1; transform: translate3d(0, 0, 0); }
+        }
+        .animate-fade-in-down { animation: fadeInDown 0.5s; }
+        @keyframes fadeOutUp {
+            from { opacity: 1; }
+            to { opacity: 0; transform: translate3d(0, -20%, 0); }
+        }
+        .animate-fade-out-up { animation: fadeOutUp 0.5s; }
+        
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            max-width: 90%;
+            width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.95);
+            transition: transform 0.3s;
+        }
+        .modal-overlay.visible .modal-content {
+            transform: scale(1);
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid hsl(var(--primary));
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Quiz styles */
+        .quiz-option {
+            display: block;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border: 1px solid hsl(var(--border));
+            border-radius: 0.5rem;
+            text-align: left;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .quiz-option:hover {
+            background-color: hsl(var(--secondary));
+        }
+        .quiz-option.selected {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+            border-color: hsl(var(--primary));
+        }
+
+    </style>
+    <script>
+        // Tailwind Customization
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        border: 'hsl(var(--border))',
+                        background: 'hsl(var(--background))',
+                        foreground: 'hsl(var(--foreground))',
+                        primary: {
+                            DEFAULT: 'hsl(var(--primary))',
+                            foreground: 'hsl(var(--primary-foreground))'
+                        },
+                        secondary: {
+                            DEFAULT: 'hsl(var(--secondary))',
+                            foreground: 'hsl(var(--secondary-foreground))'
+                        },
+                        destructive: {
+                            DEFAULT: 'hsl(var(--destructive))',
+                            foreground: 'hsl(var(--destructive-foreground))'
+                        },
+                        muted: {
+                            DEFAULT: 'hsl(var(--muted))',
+                            foreground: 'hsl(var(--muted-foreground))'
+                        },
+                        accent: {
+                            DEFAULT: 'hsl(var(--accent))',
+                            foreground: 'hsl(var(--accent-foreground))'
+                        },
+                        card: {
+                            DEFAULT: 'hsl(var(--card))',
+                            foreground: 'hsl(var(--card-foreground))'
+                        },
+                        success: 'hsl(var(--success))',
+                    },
+                    borderRadius: {
+                        lg: `0.5rem`,
+                        md: `calc(0.5rem - 2px)`,
+                        sm: `calc(0.5rem - 4px)`
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-secondary/50">
+    <div id="app" class="max-w-md mx-auto bg-background min-h-screen shadow-2xl pb-24 relative">
+        <!-- Main content area where pages will be rendered -->
+        <main id="main-content" class="h-full">
+            <!-- All pages are here, but only one is visible at a time -->
+        </main>
+        
+        <!-- Bottom Navigation Bar -->
+        <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto h-16 bg-white border-t border-border flex justify-around items-center z-50 shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+            <!-- Navigation items will be inserted here by JavaScript -->
+        </nav>
+        
+        <!-- Toast Notification Placeholder -->
+        <div id="toast-container" class="fixed top-5 right-5 z-50"></div>
+
+        <!-- Modal Placeholder -->
+        <div id="modal-container"></div>
+    </div>
+
+    <script>
+    // --- GEMINI API INTEGRATION ---
+    async function callGeminiAPI(userQuery, systemPrompt, useSearch = false) {
+        const apiKey = ""; // This will be populated by the environment
+        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+        const payload = {
+            contents: [{ parts: [{ text: userQuery }] }],
+        };
+
+        if (useSearch) {
+            payload.tools = [{ "google_search": {} }];
+        }
+
+        if (systemPrompt) {
+            payload.systemInstruction = {
+                parts: [{ text: systemPrompt }]
+            };
+        }
+        
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.text();
+                throw new Error(`API call failed with status ${response.status}: ${errorBody}`);
+            }
+
+            const result = await response.json();
+            const candidate = result.candidates?.[0];
+
+            if (candidate && candidate.content?.parts?.[0]?.text) {
+                return candidate.content.parts[0].text;
+            } else {
+                console.error("Unexpected response structure:", result);
+                return "Sorry, I couldn't get a valid response. Please try again.";
+            }
+        } catch (error) {
+            console.error("Error calling Gemini API:", error);
+            return "An error occurred while fetching insights. Please check the console for details.";
+        }
+    }
+
+    // --- ICON AND COMPONENT FACTORY ---
+    const e = React.createElement;
+    // Helper to create Lucide icons
+    const Icon = ({ name, ...props }) => {
+        if (!window.lucide || !window.lucide[name]) {
+            console.warn(`Lucide icon "${name}" not found.`);
+            return null;
+        }
+        return e(window.lucide[name], props);
+    };
+
+    // --- MOCK DATA ---
+    const oilseeds = [
+        { id: 'mustard', name: { en: 'Mustard', hi: 'सरसों' }, price: 5450, change: 2.3 },
+        { id: 'soybean', name: { en: 'Soybean', hi: 'सोयाबीन' }, price: 4820, change: -1.2 },
+        { id: 'groundnut', name: { en: 'Groundnut', hi: 'मूंगफली' }, price: 6200, change: 3.1 },
+        { id: 'sunflower', name: { en: 'Sunflower', hi: 'सूरजमुखी' }, price: 5950, change: 0.8 },
+        { id: 'sesame', name: { en: 'Sesame', hi: 'तिल' }, price: 7100, change: -0.5 },
+        { id: 'safflower', name: { en: 'Safflower', hi: 'कुसुम' }, price: 5300, change: 1.5 },
+        { id: 'niger', name: { en: 'Niger', hi: 'रामतिल' }, price: 6800, change: -0.9 },
+        { id: 'castor', name: { en: 'Castor', hi: 'अरंडी' }, price: 6100, change: 2.1 },
+        { id: 'linseed', name: { en: 'Linseed', hi: 'अलसी' }, price: 5750, change: -1.8 },
+    ];
+    
+    // --- LANGUAGE MANAGEMENT ---
+    let currentLanguage = 'en';
+    function t(enText, hiText) {
+        return currentLanguage === 'en' ? enText : hiText;
+    }
+    
+    // --- STATE MANAGEMENT ---
+    let activePage = 'dashboard';
+    let selectedOilseed = oilseeds[0];
+    let userRiskProfile = null; // 'Conservative', 'Moderate', 'Aggressive'
+
+    // --- UI COMPONENTS ---
+    const Card = ({ children, className = '' }) => `
+        <div class="bg-card rounded-xl shadow-sm border border-border p-4 ${className}">
+            ${children}
+        </div>
+    `;
+
+    function showToast(message, type = 'success') {
+        const toastContainer = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        const bgColor = type === 'success' ? 'bg-primary' : 'bg-destructive';
+        toast.className = `px-4 py-2 rounded-lg text-white ${bgColor} shadow-lg animate-fade-in-down`;
+        toast.textContent = message;
+        toastContainer.appendChild(toast);
+        setTimeout(() => {
+            toast.classList.add('animate-fade-out-up');
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
+
+    function showModal(title, content, onOpen = () => {}) {
+        const modalContainer = document.getElementById('modal-container');
+        const modalId = `modal-${Date.now()}`;
+        const modalHTML = `
+            <div id="${modalId}" class="modal-overlay">
+                <div class="modal-content">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold">${title}</h2>
+                        <button class="close-modal-btn text-2xl leading-none text-muted-foreground hover:text-foreground">&times;</button>
+                    </div>
+                    <div class="modal-body">${content}</div>
+                </div>
+            </div>
+        `;
+        modalContainer.innerHTML = modalHTML;
+        
+        setTimeout(() => {
+            document.getElementById(modalId).classList.add('visible');
+            onOpen(modalId);
+        }, 10);
+
+        document.querySelector(`#${modalId} .close-modal-btn`).addEventListener('click', () => {
+             closeModal(modalId);
+        });
+         document.getElementById(modalId).addEventListener('click', (e) => {
+            if(e.target.id === modalId) closeModal(modalId);
+        });
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('visible');
+            setTimeout(() => modal.remove(), 300);
+        }
+    }
+    
+    // --- PAGE RENDERING FUNCTIONS ---
+    function renderDashboard() {
+        let riskProfileHtml = `
+            <p class="text-sm text-muted-foreground">${t('Complete the assessment to find out your risk profile.', 'अपनी जोखिम प्रोफ़ाइल जानने के लिए मूल्यांकन पूरा करें।')}</p>
+            <button id="take-risk-assessment-btn" class="mt-2 w-full bg-secondary text-secondary-foreground font-semibold py-2 rounded-lg">${t('Take Risk Assessment', 'जोखिम मूल्यांकन करें')}</button>
+        `;
+
+        if (userRiskProfile) {
+            const profileColors = {
+                'Conservative': 'bg-blue-100 text-blue-800',
+                'Moderate': 'bg-yellow-100 text-yellow-800',
+                'Aggressive': 'bg-red-100 text-red-800'
+            };
+            riskProfileHtml = `
+                <div class="flex justify-between items-center">
+                    <p class="text-sm text-muted-foreground">${t('Your Profile', 'आपकी प्रोफ़ाइल')}</p>
+                    <span class="text-sm font-semibold px-2 py-1 rounded-full ${profileColors[userRiskProfile]}">${t(userRiskProfile, userRiskProfile)}</span>
+                </div>
+                <p class="text-lg font-bold mt-1">${t(userRiskProfile, userRiskProfile)}</p>
+            `;
+        }
+
+        return `
+            <div class="page p-4" id="dashboard">
+                <header class="flex justify-between items-center mb-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-foreground">Hello, Sanjay! 👋</h1>
+                        <p class="text-muted-foreground">Patna, Bihar • 28°C ☀️</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                         <div id="lang-toggle" class="cursor-pointer text-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-languages"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
+                         </div>
+                        <div class="relative">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                            <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-destructive rounded-full border-2 border-background"></span>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="grid grid-cols-3 gap-3 mb-4 text-center">
+                    ${Card({ className: 'col-span-1', children: `<p class="text-sm text-muted-foreground">${t('Virtual Balance', 'वर्चुअल बैलेंस')}</p><p class="text-lg font-bold">₹2,50,000</p>`})}
+                    ${Card({ className: 'col-span-1', children: `<p class="text-sm text-muted-foreground">${t('Active', 'सक्रिय अनुबंध')}</p><p class="text-lg font-bold">3</p>`})}
+                    ${Card({ className: 'col-span-1', children: `<p class="text-sm text-muted-foreground">${t('Profit/Loss', 'लाभ/हानि')}</p><p class="text-lg font-bold text-success">+₹8,400</p>`})}
+                </div>
+
+                ${Card({ className: 'mb-4', children: `
+                    <h3 class="font-bold mb-2">${t('Risk Profile', 'जोखिम प्रोफ़ाइल')}</h3>
+                    ${riskProfileHtml}
+                `})}
+                
+                ${Card({
+                    className: 'mb-6',
+                    children: `
+                        <p class="font-bold mb-2">${t('Market News & Alerts', 'बाजार समाचार और अलर्ट')}</p>
+                        <div id="market-news-content" class="text-muted-foreground text-sm min-h-[4rem]">
+                           ${t('Get the latest AI-powered news affecting the oilseeds market.', 'तिलहन बाजार को प्रभावित करने वाली नवीनतम एआई-संचालित खबरें प्राप्त करें।')}
+                        </div>
+                        <button id="fetch-news-btn" class="mt-2 w-full bg-secondary text-secondary-foreground font-semibold py-2 rounded-lg flex items-center justify-center gap-2">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-newspaper"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h4"/><path d="M16 2v20"/><path d="M8 7h4"/><path d="M8 12h4"/><path d="M8 17h4"/></svg>
+                           ${t('Fetch Latest News', 'नवीनतम समाचार प्राप्त करें')}
+                        </button>
+                    `
+                })}
+
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="text-xl font-bold">${t('Today\'s Prices', 'आज की कीमतें')}</h2>
+                </div>
+                
+                <div class="space-y-3">
+                    ${oilseeds.slice(0, 3).map(seed => Card({
+                        children: `
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="font-bold text-lg">${t(seed.name.en, seed.name.hi)}</p>
+                                    <p class="text-sm text-muted-foreground">${t('per Quintal', 'प्रति क्विंटल')}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-bold text-lg">₹${seed.price.toLocaleString('en-IN')}</p>
+                                    <p class="text-sm font-semibold ${seed.change >= 0 ? 'text-success' : 'text-destructive'}">
+                                        ${seed.change >= 0 ? '▲' : '▼'} ${Math.abs(seed.change)}%
+                                    </p>
+                                </div>
+                            </div>
+                        `
+                    })).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    function renderTrade() {
+        return `
+            <div class="page" id="trade">
+                <header class="p-4 bg-white border-b sticky top-0 z-10">
+                    <h1 class="text-2xl font-bold text-center">${t('Futures Trading', 'वायदा कारोबार')}</h1>
+                    <p class="text-center text-muted-foreground">${t('Oilseeds Futures Market', 'तिलहन वायदा बाजार')}</p>
+                </header>
+                <div class="p-4 space-y-4">
+                    <select id="oilseed-selector" class="w-full p-3 border rounded-lg bg-secondary font-semibold text-lg">
+                        ${oilseeds.map(seed => `<option value="${seed.id}" ${seed.id === selectedOilseed.id ? 'selected' : ''}>${t(seed.name.en, seed.name.hi)}</option>`).join('')}
+                    </select>
+                    
+                    ${Card({
+                        className: 'text-center',
+                        children: `
+                            <div class="flex items-center justify-center gap-2">
+                                <h2 class="text-xl font-bold">${t(selectedOilseed.name.en, selectedOilseed.name.hi)}</h2>
+                                <span class="bg-destructive text-white text-xs font-semibold px-2 py-1 rounded-full">LIVE</span>
+                            </div>
+                            <p class="text-sm text-muted-foreground">${t('Spot Price', 'हाजिर मूल्य')}</p>
+                            <p class="text-4xl font-bold my-1">₹${selectedOilseed.price.toLocaleString('en-IN')}</p>
+                            <p class="text-muted-foreground">${t('per Quintal', 'प्रति क्विंटल')}</p>
+                        `
+                    })}
+
+                    <div class="w-full h-64">
+                        <div class="chart-area relative w-full h-64 rounded-lg overflow-hidden bg-black">
+                            <!-- Place your candlestick sample image here.
+                                 Put the image at: /Users/mdmahbubreza/Desktop/zz/assets/candlestick-sample.png
+                                 or update the src to your preferred path. -->
+                            <img id="trade-sample-img" src="./assets/download.jpeg" alt="Candlestick sample"
+                                 class="absolute inset-0 w-full h-full object-contain" style="background-color:#061826" />
+                            <div id="chart-container" class="absolute inset-0 p-2"></div>
+                        </div>
+                    </div>
+                    
+                    ${Card({
+                        children: `
+                            <h3 class="text-lg font-bold mb-3">${t('Market Depth', 'बाजार की गहराई')}</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="font-semibold text-success text-center mb-2">${t('BUY (Bid)', 'खरीदें (बोली)')}</p>
+                                    <div class="space-y-1 text-sm"><div class="flex justify-between p-1 bg-green-50 rounded"><span class="font-medium text-success">₹${(selectedOilseed.price + 20).toLocaleString('en-IN')}</span> <span class="text-muted-foreground">45Q</span></div><div class="flex justify-between p-1"><span class="font-medium text-success">₹${(selectedOilseed.price + 10).toLocaleString('en-IN')}</span> <span class="text-muted-foreground">82Q</span></div><div class="flex justify-between p-1 bg-green-50 rounded"><span class="font-medium text-success">₹${selectedOilseed.price.toLocaleString('en-IN')}</span> <span class="text-muted-foreground">120Q</span></div></div>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-destructive text-center mb-2">${t('SELL (Ask)', 'बेचें (पूछें)')}</p>
+                                    <div class="space-y-1 text-sm"><div class="flex justify-between p-1 bg-red-50 rounded"><span class="font-medium text-destructive">₹${(selectedOilseed.price + 40).toLocaleString('en-IN')}</span> <span class="text-muted-foreground">38Q</span></div><div class="flex justify-between p-1"><span class="font-medium text-destructive">₹${(selectedOilseed.price + 50).toLocaleString('en-IN')}</span> <span class="text-muted-foreground">65Q</span></div><div class="flex justify-between p-1 bg-red-50 rounded"><span class="font-medium text-destructive">₹${(selectedOilseed.price + 60).toLocaleString('en-IN')}</span> <span class="text-muted-foreground">95Q</span></div></div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4"><p class="text-sm text-muted-foreground">${t('Total Volume', 'कुल मात्रा')}</p><p class="font-bold text-lg">2840 Quintals</p></div>
+                        `
+                    })}
+                </div>
+                <div class="fixed bottom-16 left-0 right-0 max-w-md mx-auto p-4 bg-white border-t grid grid-cols-2 gap-4">
+                    <button id="buy-btn" class="w-full bg-primary text-white font-bold py-3 rounded-lg">${t('BUY', 'खरीदें')}</button>
+                    <button id="sell-btn" class="w-full bg-destructive text-white font-bold py-3 rounded-lg">${t('SELL', 'बेचें')}</button>
+                </div>
+            </div>
+        `;
+    }
+    
+    function renderPredict() {
+        return `
+            <div class="page" id="predict">
+                 <header class="p-4 bg-primary text-primary-foreground">
+                    <h1 class="text-2xl font-bold text-center">${t('AI Price Prediction', 'एआई मूल्य भविष्यवाणी')}</h1>
+                    <p class="text-center text-primary-foreground/80">${t('Make Data-Driven Decisions', 'डेटा-संचालित निर्णय लें')}</p>
+                </header>
+                <div class="p-4 space-y-4">
+                    ${Card({
+                        children: `
+                            <div>
+                                <label class="font-semibold">${t('Select Crop', 'फसल चुनें')}</label>
+                                <select id="predict-oilseed-selector" class="w-full mt-1 p-2 border rounded-lg bg-secondary">${oilseeds.map(seed => `<option value="${seed.id}" ${seed.id === selectedOilseed.id ? 'selected' : ''}>${t(seed.name.en, seed.name.hi)}</option>`).join('')}</select>
+                            </div>
+                            <div class="mt-4">
+                                <label class="font-semibold">${t('Time Horizon', 'समय सीमा')}</label>
+                                <div class="grid grid-cols-3 gap-2 mt-1">
+                                    <button class="bg-primary text-white p-2 rounded-lg">${t('30 Days', '30 दिन')}</button>
+                                    <button class="bg-secondary p-2 rounded-lg">${t('60 Days', '60 दिन')}</button>
+                                    <button class="bg-secondary p-2 rounded-lg">${t('90 Days', '90 दिन')}</button>
+                                </div>
+                            </div>
+                        `
+                    })}
+                     ${Card({
+                        children: `
+                           <div class="flex justify-between items-center mb-4">
+                             <h3 class="text-lg font-bold">${t('Prediction Result', 'भविष्यवाणी परिणाम')}</h3>
+                             <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full">${t('High Confidence', 'उच्च आत्मविश्वास')}</span>
+                           </div>
+                           <div class="grid grid-cols-2 gap-4 mb-4">
+                               <div class="bg-secondary p-3 rounded-lg text-center"><p class="text-sm text-muted-foreground">${t('Current Price', 'वर्तमान मूल्य')}</p><p class="font-bold text-xl">₹${selectedOilseed.price.toLocaleString('en-IN')}</p></div>
+                               <div class="bg-secondary p-3 rounded-lg text-center"><p class="text-sm text-muted-foreground">${t('30 Days Later', '30 दिन बाद')}</p><p class="font-bold text-xl">₹${Math.round(selectedOilseed.price * 1.055).toLocaleString('en-IN')}</p></div>
+                           </div>
+                           <div class="bg-green-50 border border-green-200 text-green-800 p-4 rounded-lg text-center"><p class="text-2xl font-bold">▲ +5.5%</p><p class="font-semibold">${t('Price Expected to Rise', 'कीमत बढ़ने की उम्मीद')}</p><p class="text-sm mt-1">✅ ${t('Good time to sell may come', 'बेचने का अच्छा समय आ सकता है')}</p></div>
+                           <button id="get-factors-btn" class="mt-4 w-full text-primary font-semibold flex items-center justify-center gap-2">✨ ${t('Analyze Factors Affecting Price', 'मूल्य को प्रभावित करने वाले कारकों का विश्लेषण करें')}</button>
+                        `
+                    })}
+                </div>
+            </div>
+        `;
+    }
+
+    function renderContracts() {
+        return `
+            <div class="page" id="contracts">
+                 <header class="p-4 bg-primary text-primary-foreground"><h1 class="text-2xl font-bold text-center">${t('E-Contracts', 'ई-अनुबंध')}</h1><p class="text-center text-primary-foreground/80">${t('Digital Contracts - Secure and Transparent', 'डिजिटल अनुबंध - सुरक्षित और पारदर्शी')}</p></header>
+                <div class="p-4 space-y-4">
+                    <div class="grid grid-cols-3 gap-3 text-center bg-white p-4 rounded-xl shadow-sm border">
+                        <div><p class="text-sm text-muted-foreground">${t('Total', 'कुल अनुबंध')}</p><p class="text-2xl font-bold">3</p></div>
+                        <div><p class="text-sm text-muted-foreground">${t('Confirmed', 'पुष्टि')}</p><p class="text-2xl font-bold">1</p></div>
+                        <div><p class="text-sm text-muted-foreground">${t('Total Value', 'कुल मूल्य')}</p><p class="text-2xl font-bold">₹12.1L</p></div>
+                    </div>
+                     ${Card({
+                        className: 'bg-blue-50 border-blue-200',
+                        children: `
+                            <div class="flex items-center gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600 w-8 h-8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                <div>
+                                    <h4 class="font-bold text-blue-900">${t('Blockchain Secured', 'ब्लॉकचेन सुरक्षित')}</h4>
+                                    <p class="text-sm text-blue-700">${t('Your contracts are immutable and transparently recorded.', 'आपके अनुबंध अपरिवर्तनीय और पारदर्शी रूप से दर्ज किए गए हैं।')}</p>
+                                </div>
+                            </div>
+                        `
+                    })}
+                    <button id="create-contract-btn" class="w-full bg-primary text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>${t('Create New Contract', 'नया अनुबंध बनाएं')}</button>
+                    <h2 class="text-xl font-bold pt-2">${t('My Contracts', 'मेरे अनुबंध')}</h2>
+                    ${Card({
+                        children: `
+                            <div class="flex justify-between items-start">
+                               <div><p class="font-bold text-lg">AgriCorp Foods</p><p class="text-sm text-muted-foreground">${t('अनुबंध #CNT001', 'Contract #CNT001')}</p></div>
+                                <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full">${t('Confirmed', 'पुष्टि')}</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mt-4 border-t pt-4"><div><p class="text-sm text-muted-foreground">${t('Crop', 'फसल')}</p><p class="font-semibold">${t('सरसों', 'Mustard')}</p></div><div><p class="text-sm text-muted-foreground">${t('Quantity', 'मात्रा')}</p><p class="font-semibold">100 ${t('क्विंटल', 'Quintal')}</p></div><div><p class="text-sm text-muted-foreground">${t('Per Quintal', 'प्रति क्विंटल')}</p><p class="font-semibold">₹5,400</p></div><div><p class="text-sm text-muted-foreground">${t('Total Value', 'कुल मूल्य')}</p><p class="font-semibold">₹5,40,000</p></div></div>
+                            <div class="border-t mt-4 pt-4 flex justify-between items-center text-sm"><p class="text-muted-foreground">${t('Delivery: 15 मार्च, 2026', 'Delivery: 15 Mar, 2026')}</p><a href="#" class="text-primary font-semibold">${t('View Details', 'विवरण देखें')}</a></div>
+                        `
+                    })}
+                </div>
+            </div>
+        `;
+    }
+    
+    function renderLearn() {
+        return `
+             <div class="page" id="learn">
+                 <header class="p-4 bg-white border-b"><div class="flex justify-between items-center"><h1 class="text-2xl font-bold">${t('Learning Hub', 'लर्निंग हब')}</h1><div class="w-8 h-8 bg-secondary rounded-full"></div></div></header>
+                <div class="p-4 space-y-4">
+                     <div class="grid grid-cols-2 gap-4">
+                        ${Card({ className: 'text-center', children: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 mx-auto mb-2 text-primary"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" class="text-primary" /></svg><p class="font-semibold mt-1">${t('Video Lessons', 'वीडियो पाठ')}</p>`})}
+                        <div id="hedging-strategies-card" class="cursor-pointer">
+                        ${Card({ className: 'text-center h-full', children: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 mx-auto mb-2 text-primary"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><p class="font-semibold mt-1">${t('Hedging Strategies', 'हेजिंग रणनीतियाँ')}</p>`})}
+                        </div>
+                    </div>
+                     ${Card({
+                        className: 'mt-4',
+                        children: `
+                            <h2 class="text-xl font-bold">${t('Featured Video', 'विशेष रुप से प्रदर्शित वीडियो')}</h2>
+                            <div class="aspect-video bg-secondary rounded-lg flex items-center justify-center my-3"><div class="w-12 h-12 bg-black/20 rounded-full flex items-center justify-center cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+                            <h3 class="font-bold text-lg">${t('Understanding Futures Trading for Farmers', 'किसानों के लिए वायदा कारोबार को समझना')}</h3>
+                            <p class="text-muted-foreground text-sm mt-1">${t('Learn how to protect your crop prices using virtual hedging techniques.', 'वर्चुअल हेजिंग तकनीकों का उपयोग करके अपनी फसल की कीमतों की रक्षा करना सीखें।')}</p>
+                        `
+                     })}
+                     ${Card({
+                        className: 'mt-4',
+                        children: `
+                            <h2 class="text-xl font-bold mb-2">✨ ${t('AI Kisan Dost', 'एआई किसान दोस्त')}</h2>
+                            <p class="text-muted-foreground mb-3">${t('Have a question about trading? Ask your AI friend!', 'व्यापार के बारे में कोई प्रश्न है? अपने एआई दोस्त से पूछें!')}</p>
+                            <textarea id="kisan-dost-question" class="w-full p-2 border rounded-lg bg-secondary" rows="3" placeholder="${t('e.g., What is a futures contract?', 'जैसे, वायदा अनुबंध क्या है?')}"></textarea>
+                            <button id="ask-kisan-dost-btn" class="mt-2 w-full bg-primary text-white font-semibold py-2 rounded-lg flex items-center justify-center gap-2">
+                                ${t('Ask Question', 'प्रश्न पूछें')}
+                            </button>
+                            <div id="kisan-dost-answer" class="mt-4 text-sm text-muted-foreground bg-secondary p-3 rounded-lg min-h-[4rem]">
+                                ${t('Your answer will appear here...', 'आपका उत्तर यहां दिखाई देगा...')}
+                            </div>
+                        `
+                    })}
+                </div>
+            </div>
+        `;
+    }
+
+    // --- CHART LOGIC ---
+    function generateCandlestickData(basePrice) {
+        let data = []; let price = basePrice;
+        for (let i = 0; i < 30; i++) {
+            const open = price; const close = open + (Math.random() - 0.5) * 100;
+            const high = Math.max(open, close) + Math.random() * 50; const low = Math.min(open, close) - Math.random() * 50;
+            data.push({ date: `Day ${i + 1}`, ohlc: [Math.round(open), Math.round(high), Math.round(low), Math.round(close)] });
+            price = close;
+        }
+        return data;
+    }
+
+    function renderChart() {
+        const { ResponsiveContainer, ComposedChart, XAxis, YAxis, Tooltip, Candlestick, Cell } = window.Recharts;
+        // hide the placeholder image once the chart is about to render
+        const placeholder = document.getElementById('trade-sample-img');
+        if (placeholder) placeholder.style.display = 'none';
+         const data = generateCandlestickData(selectedOilseed.price);
+         const CustomTooltip = ({ active, payload }) => {
+             if (active && payload && payload.length) {
+                 const data = payload[0].payload.ohlc;
+                 return e('div', { className: 'bg-white/80 backdrop-blur-sm p-2 border rounded-lg shadow-lg' },
+                     e('p', { className: 'font-bold' }, `O: ${data[0]} H: ${data[1]}`),
+                     e('p', { className: 'font-bold' }, `L: ${data[2]} C: ${data[3]}`)
+                 );
+             }
+             return null;
+         };
+        const chart = e(ResponsiveContainer, { width: '100%', height: '100%' },
+            e(ComposedChart, { data: data, margin: { top: 5, right: 5, left: -30, bottom: 5 } },
+                e(XAxis, { dataKey: 'date', tickLine: false, axisLine: false, tickMargin: 8 }),
+                e(YAxis, { orientation: 'left', domain: ['dataMin - 100', 'dataMax + 100'], tickLine: false, axisLine: false, tickMargin: 8 }),
+                e(Tooltip, { content: CustomTooltip, cursor: { stroke: 'hsl(var(--primary))' } }),
+                e(Candlestick, { dataKey: 'ohlc', fill: 'hsl(var(--success))', stroke: 'hsl(var(--success))', isAnimationActive: false },
+                    data.map((entry, index) => e(Cell, { key: `cell-${index}`, fill: entry.ohlc[3] >= entry.ohlc[0] ? 'hsl(var(--success))' : 'hsl(var(--destructive))' }))
+                )
+            )
+        );
+        ReactDOM.render(chart, document.getElementById('chart-container'));
+    }
+
+
+    
+    // --- PAGE RENDERING FUNCTIONS ---
+    function renderDashboard() {
+        let riskProfileHtml = `
+            <p class="text-sm text-muted-foreground">${t('Complete the assessment to find out your risk profile.', 'अपनी जोखिम प्रोफ़ाइल जानने के लिए मूल्यांकन पूरा करें।')}</p>
+            <button id="take-risk-assessment-btn" class="mt-2 w-full bg-secondary text-secondary-foreground font-semibold py-2 rounded-lg">${t('Take Risk Assessment', 'जोखिम मूल्यांकन करें')}</button>
+        `;
+
+        if (userRiskProfile) {
+            const profileColors = {
+                'Conservative': 'bg-blue-100 text-blue-800',
+                'Moderate': 'bg-yellow-100 text-yellow-800',
+                'Aggressive': 'bg-red-100 text-red-800'
+            };
+            riskProfileHtml = `
+                <div class="flex justify-between items-center">
+                    <p class="text-sm text-muted-foreground">${t('Your Profile', 'आपकी प्रोफ़ाइल')}</p>
+                    <span class="text-sm font-semibold px-2 py-1 rounded-full ${profileColors[userRiskProfile]}">${t(userRiskProfile, userRiskProfile)}</span>
+                </div>
+                <p class="text-lg font-bold mt-1">${t(userRiskProfile, userRiskProfile)}</p>
+            `;
+        }
+
+        return `
+            <div class="page p-4" id="dashboard">
+                <header class="flex justify-between items-center mb-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-foreground">Hello, Sanjay! 👋</h1>
+                        <p class="text-muted-foreground">Patna, Bihar • 28°C ☀️</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                         <div id="lang-toggle" class="cursor-pointer text-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-languages"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
+                         </div>
+                        <div class="relative">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                            <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-destructive rounded-full border-2 border-background"></span>
+                        </div>
+                    </div>
+                </header>
+
+                <div class="grid grid-cols-3 gap-3 mb-4 text-center">
+                    ${Card({ className: 'col-span-1', children: `<p class="text-sm text-muted-foreground">${t('Virtual Balance', 'वर्चुअल बैलेंस')}</p><p class="text-lg font-bold">₹2,50,000</p>`})}
+                    ${Card({ className: 'col-span-1', children: `<p class="text-sm text-muted-foreground">${t('Active', 'सक्रिय अनुबंध')}</p><p class="text-lg font-bold">3</p>`})}
+                    ${Card({ className: 'col-span-1', children: `<p class="text-sm text-muted-foreground">${t('Profit/Loss', 'लाभ/हानि')}</p><p class="text-lg font-bold text-success">+₹8,400</p>`})}
+                </div>
+
+                ${Card({ className: 'mb-4', children: `
+                    <h3 class="font-bold mb-2">${t('Risk Profile', 'जोखिम प्रोफ़ाइल')}</h3>
+                    ${riskProfileHtml}
+                `})}
+                
+                ${Card({
+                    className: 'mb-6',
+                    children: `
+                        <p class="font-bold mb-2">${t('Market News & Alerts', 'बाजार समाचार और अलर्ट')}</p>
+                        <div id="market-news-content" class="text-muted-foreground text-sm min-h-[4rem]">
+                           ${t('Get the latest AI-powered news affecting the oilseeds market.', 'तिलहन बाजार को प्रभावित करने वाली नवीनतम एआई-संचालित खबरें प्राप्त करें।')}
+                        </div>
+                        <button id="fetch-news-btn" class="mt-2 w-full bg-secondary text-secondary-foreground font-semibold py-2 rounded-lg flex items-center justify-center gap-2">
+                           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-newspaper"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h4"/><path d="M16 2v20"/><path d="M8 7h4"/><path d="M8 12h4"/><path d="M8 17h4"/></svg>
+                           ${t('Fetch Latest News', 'नवीनतम समाचार प्राप्त करें')}
+                        </button>
+                    `
+                })}
+
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="text-xl font-bold">${t('Today\'s Prices', 'आज की कीमतें')}</h2>
+                </div>
+                
+                <div class="space-y-3">
+                    ${oilseeds.slice(0, 3).map(seed => Card({
+                        children: `
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="font-bold text-lg">${t(seed.name.en, seed.name.hi)}</p>
+                                    <p class="text-sm text-muted-foreground">${t('per Quintal', 'प्रति क्विंटल')}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="font-bold text-lg">₹${seed.price.toLocaleString('en-IN')}</p>
+                                    <p class="text-sm font-semibold ${seed.change >= 0 ? 'text-success' : 'text-destructive'}">
+                                        ${seed.change >= 0 ? '▲' : '▼'} ${Math.abs(seed.change)}%
+                                    </p>
+                                </div>
+                            </div>
+                        `
+                    })).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    function renderTrade() {
+        return `
+            <div class="page" id="trade">
+                <header class="p-4 bg-white border-b sticky top-0 z-10">
+                    <h1 class="text-2xl font-bold text-center">${t('Futures Trading', 'वायदा कारोबार')}</h1>
+                    <p class="text-center text-muted-foreground">${t('Oilseeds Futures Market', 'तिलहन वायदा बाजार')}</p>
+                </header>
+                <div class="p-4 space-y-4">
+                    <select id="oilseed-selector" class="w-full p-3 border rounded-lg bg-secondary font-semibold text-lg">
+                        ${oilseeds.map(seed => `<option value="${seed.id}" ${seed.id === selectedOilseed.id ? 'selected' : ''}>${t(seed.name.en, seed.name.hi)}</option>`).join('')}
+                    </select>
+                    
+                    ${Card({
+                        className: 'text-center',
+                        children: `
+                            <div class="flex items-center justify-center gap-2">
+                                <h2 class="text-xl font-bold">${t(selectedOilseed.name.en, selectedOilseed.name.hi)}</h2>
+                                <span class="bg-destructive text-white text-xs font-semibold px-2 py-1 rounded-full">LIVE</span>
+                            </div>
+                            <p class="text-sm text-muted-foreground">${t('Spot Price', 'हाजिर मूल्य')}</p>
+                            <p class="text-4xl font-bold my-1">₹${selectedOilseed.price.toLocaleString('en-IN')}</p>
+                            <p class="text-muted-foreground">${t('per Quintal', 'प्रति क्विंटल')}</p>
+                        `
+                    })}
+
+                    <div class="w-full h-64">
+                        <div class="chart-area relative w-full h-64 rounded-lg overflow-hidden bg-black">
+                            <!-- Place your candlestick sample image here.
+                                 Put the image at: /Users/mdmahbubreza/Desktop/zz/assets/candlestick-sample.png
+                                 or update the src to your preferred path. -->
+                            <img id="trade-sample-img" src="./assets/download.jpeg" alt="Candlestick sample"
+                                 class="absolute inset-0 w-full h-full object-contain" style="background-color:#061826" />
+                            <div id="chart-container" class="absolute inset-0 p-2"></div>
+                        </div>
+                    </div>
+                    
+                    ${Card({
+                        children: `
+                            <h3 class="text-lg font-bold mb-3">${t('Market Depth', 'बाजार की गहराई')}</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="font-semibold text-success text-center mb-2">${t('BUY (Bid)', 'खरीदें (बोली)')}</p>
+                                    <div class="space-y-1 text-sm"><div class="flex justify-between p-1 bg-green-50 rounded"><span class="font-medium text-success">₹${(selectedOilseed.price + 20).toLocaleString('en-IN')}</span> <span class="text-muted-foreground">45Q</span></div><div class="flex justify-between p-1"><span class="font-medium text-success">₹${(selectedOilseed.price + 10).toLocaleString('en-IN')}</span> <span class="text-muted-foreground">82Q</span></div><div class="flex justify-between p-1 bg-green-50 rounded"><span class="font-medium text-success">₹${selectedOilseed.price.toLocaleString('en-IN')}</span> <span class="text-muted-foreground">120Q</span></div></div>
+                                </div>
+                                <div>
+                                    <p class="font-semibold text-destructive text-center mb-2">${t('SELL (Ask)', 'बेचें (पूछें)')}</p>
+                                    <div class="space-y-1 text-sm"><div class="flex justify-between p-1 bg-red-50 rounded"><span class="font-medium text-destructive">₹${(selectedOilseed.price + 40).toLocaleString('en-IN')}</span> <span class="text-muted-foreground">38Q</span></div><div class="flex justify-between p-1"><span class="font-medium text-destructive">₹${(selectedOilseed.price + 50).toLocaleString('en-IN')}</span> <span class="text-muted-foreground">65Q</span></div><div class="flex justify-between p-1 bg-red-50 rounded"><span class="font-medium text-destructive">₹${(selectedOilseed.price + 60).toLocaleString('en-IN')}</span> <span class="text-muted-foreground">95Q</span></div></div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-4"><p class="text-sm text-muted-foreground">${t('Total Volume', 'कुल मात्रा')}</p><p class="font-bold text-lg">2840 Quintals</p></div>
+                        `
+                    })}
+                </div>
+                <div class="fixed bottom-16 left-0 right-0 max-w-md mx-auto p-4 bg-white border-t grid grid-cols-2 gap-4">
+                    <button id="buy-btn" class="w-full bg-primary text-white font-bold py-3 rounded-lg">${t('BUY', 'खरीदें')}</button>
+                    <button id="sell-btn" class="w-full bg-destructive text-white font-bold py-3 rounded-lg">${t('SELL', 'बेचें')}</button>
+                </div>
+            </div>
+        `;
+    }
+    
+    function renderPredict() {
+        return `
+            <div class="page" id="predict">
+                 <header class="p-4 bg-primary text-primary-foreground">
+                    <h1 class="text-2xl font-bold text-center">${t('AI Price Prediction', 'एआई मूल्य भविष्यवाणी')}</h1>
+                    <p class="text-center text-primary-foreground/80">${t('Make Data-Driven Decisions', 'डेटा-संचालित निर्णय लें')}</p>
+                </header>
+                <div class="p-4 space-y-4">
+                    ${Card({
+                        children: `
+                            <div>
+                                <label class="font-semibold">${t('Select Crop', 'फसल चुनें')}</label>
+                                <select id="predict-oilseed-selector" class="w-full mt-1 p-2 border rounded-lg bg-secondary">${oilseeds.map(seed => `<option value="${seed.id}" ${seed.id === selectedOilseed.id ? 'selected' : ''}>${t(seed.name.en, seed.name.hi)}</option>`).join('')}</select>
+                            </div>
+                            <div class="mt-4">
+                                <label class="font-semibold">${t('Time Horizon', 'समय सीमा')}</label>
+                                <div class="grid grid-cols-3 gap-2 mt-1">
+                                    <button class="bg-primary text-white p-2 rounded-lg">${t('30 Days', '30 दिन')}</button>
+                                    <button class="bg-secondary p-2 rounded-lg">${t('60 Days', '60 दिन')}</button>
+                                    <button class="bg-secondary p-2 rounded-lg">${t('90 Days', '90 दिन')}</button>
+                                </div>
+                            </div>
+                        `
+                    })}
+                     ${Card({
+                        children: `
+                           <div class="flex justify-between items-center mb-4">
+                             <h3 class="text-lg font-bold">${t('Prediction Result', 'भविष्यवाणी परिणाम')}</h3>
+                             <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full">${t('High Confidence', 'उच्च आत्मविश्वास')}</span>
+                           </div>
+                           <div class="grid grid-cols-2 gap-4 mb-4">
+                               <div class="bg-secondary p-3 rounded-lg text-center"><p class="text-sm text-muted-foreground">${t('Current Price', 'वर्तमान मूल्य')}</p><p class="font-bold text-xl">₹${selectedOilseed.price.toLocaleString('en-IN')}</p></div>
+                               <div class="bg-secondary p-3 rounded-lg text-center"><p class="text-sm text-muted-foreground">${t('30 Days Later', '30 दिन बाद')}</p><p class="font-bold text-xl">₹${Math.round(selectedOilseed.price * 1.055).toLocaleString('en-IN')}</p></div>
+                           </div>
+                           <div class="bg-green-50 border border-green-200 text-green-800 p-4 rounded-lg text-center"><p class="text-2xl font-bold">▲ +5.5%</p><p class="font-semibold">${t('Price Expected to Rise', 'कीमत बढ़ने की उम्मीद')}</p><p class="text-sm mt-1">✅ ${t('Good time to sell may come', 'बेचने का अच्छा समय आ सकता है')}</p></div>
+                           <button id="get-factors-btn" class="mt-4 w-full text-primary font-semibold flex items-center justify-center gap-2">✨ ${t('Analyze Factors Affecting Price', 'मूल्य को प्रभावित करने वाले कारकों का विश्लेषण करें')}</button>
+                        `
+                    })}
+                </div>
+            </div>
+        `;
+    }
+
+    function renderContracts() {
+        return `
+            <div class="page" id="contracts">
+                 <header class="p-4 bg-primary text-primary-foreground"><h1 class="text-2xl font-bold text-center">${t('E-Contracts', 'ई-अनुबंध')}</h1><p class="text-center text-primary-foreground/80">${t('Digital Contracts - Secure and Transparent', 'डिजिटल अनुबंध - सुरक्षित और पारदर्शी')}</p></header>
+                <div class="p-4 space-y-4">
+                    <div class="grid grid-cols-3 gap-3 text-center bg-white p-4 rounded-xl shadow-sm border">
+                        <div><p class="text-sm text-muted-foreground">${t('Total', 'कुल अनुबंध')}</p><p class="text-2xl font-bold">3</p></div>
+                        <div><p class="text-sm text-muted-foreground">${t('Confirmed', 'पुष्टि')}</p><p class="text-2xl font-bold">1</p></div>
+                        <div><p class="text-sm text-muted-foreground">${t('Total Value', 'कुल मूल्य')}</p><p class="text-2xl font-bold">₹12.1L</p></div>
+                    </div>
+                     ${Card({
+                        className: 'bg-blue-50 border-blue-200',
+                        children: `
+                            <div class="flex items-center gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600 w-8 h-8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                <div>
+                                    <h4 class="font-bold text-blue-900">${t('Blockchain Secured', 'ब्लॉकचेन सुरक्षित')}</h4>
+                                    <p class="text-sm text-blue-700">${t('Your contracts are immutable and transparently recorded.', 'आपके अनुबंध अपरिवर्तनीय और पारदर्शी रूप से दर्ज किए गए हैं।')}</p>
+                                </div>
+                            </div>
+                        `
+                    })}
+                    <button id="create-contract-btn" class="w-full bg-primary text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>${t('Create New Contract', 'नया अनुबंध बनाएं')}</button>
+                    <h2 class="text-xl font-bold pt-2">${t('My Contracts', 'मेरे अनुबंध')}</h2>
+                    ${Card({
+                        children: `
+                            <div class="flex justify-between items-start">
+                               <div><p class="font-bold text-lg">AgriCorp Foods</p><p class="text-sm text-muted-foreground">${t('अनुबंध #CNT001', 'Contract #CNT001')}</p></div>
+                                <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full">${t('Confirmed', 'पुष्टि')}</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mt-4 border-t pt-4"><div><p class="text-sm text-muted-foreground">${t('Crop', 'फसल')}</p><p class="font-semibold">${t('सरसों', 'Mustard')}</p></div><div><p class="text-sm text-muted-foreground">${t('Quantity', 'मात्रा')}</p><p class="font-semibold">100 ${t('क्विंटल', 'Quintal')}</p></div><div><p class="text-sm text-muted-foreground">${t('Per Quintal', 'प्रति क्विंटल')}</p><p class="font-semibold">₹5,400</p></div><div><p class="text-sm text-muted-foreground">${t('Total Value', 'कुल मूल्य')}</p><p class="font-semibold">₹5,40,000</p></div></div>
+                            <div class="border-t mt-4 pt-4 flex justify-between items-center text-sm"><p class="text-muted-foreground">${t('Delivery: 15 मार्च, 2026', 'Delivery: 15 Mar, 2026')}</p><a href="#" class="text-primary font-semibold">${t('View Details', 'विवरण देखें')}</a></div>
+                        `
+                    })}
+                </div>
+            </div>
+        `;
+    }
+    
+    function renderLearn() {
+        return `
+             <div class="page" id="learn">
+                 <header class="p-4 bg-white border-b"><div class="flex justify-between items-center"><h1 class="text-2xl font-bold">${t('Learning Hub', 'लर्निंग हब')}</h1><div class="w-8 h-8 bg-secondary rounded-full"></div></div></header>
+                <div class="p-4 space-y-4">
+                     <div class="grid grid-cols-2 gap-4">
+                        ${Card({ className: 'text-center', children: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 mx-auto mb-2 text-primary"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" class="text-primary" /></svg><p class="font-semibold mt-1">${t('Video Lessons', 'वीडियो पाठ')}</p>`})}
+                        <div id="hedging-strategies-card" class="cursor-pointer">
+                        ${Card({ className: 'text-center h-full', children: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 mx-auto mb-2 text-primary"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><p class="font-semibold mt-1">${t('Hedging Strategies', 'हेजिंग रणनीतियाँ')}</p>`})}
+                        </div>
+                    </div>
+                     ${Card({
+                        className: 'mt-4',
+                        children: `
+                            <h2 class="text-xl font-bold">${t('Featured Video', 'विशेष रुप से प्रदर्शित वीडियो')}</h2>
+                            <div class="aspect-video bg-secondary rounded-lg flex items-center justify-center my-3"><div class="w-12 h-12 bg-black/20 rounded-full flex items-center justify-center cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+                            <h3 class="font-bold text-lg">${t('Understanding Futures Trading for Farmers', 'किसानों के लिए वायदा कारोबार को समझना')}</h3>
+                            <p class="text-muted-foreground text-sm mt-1">${t('Learn how to protect your crop prices using virtual hedging techniques.', 'वर्चुअल हेजिंग तकनीकों का उपयोग करके अपनी फसल की कीमतों की रक्षा करना सीखें।')}</p>
+                        `
+                     })}
+                     ${Card({
+                        className: 'mt-4',
+                        children: `
+                            <h2 class="text-xl font-bold mb-2">✨ ${t('AI Kisan Dost', 'एआई किसान दोस्त')}</h2>
+                            <p class="text-muted-foreground mb-3">${t('Have a question about trading? Ask your AI friend!', 'व्यापार के बारे में कोई प्रश्न है? अपने एआई दोस्त से पूछें!')}</p>
+                            <textarea id="kisan-dost-question" class="w-full p-2 border rounded-lg bg-secondary" rows="3" placeholder="${t('e.g., What is a futures contract?', 'जैसे, वायदा अनुबंध क्या है?')}"></textarea>
+                            <button id="ask-kisan-dost-btn" class="mt-2 w-full bg-primary text-white font-semibold py-2 rounded-lg flex items-center justify-center gap-2">
+                                ${t('Ask Question', 'प्रश्न पूछें')}
+                            </button>
+                            <div id="kisan-dost-answer" class="mt-4 text-sm text-muted-foreground bg-secondary p-3 rounded-lg min-h-[4rem]">
+                                ${t('Your answer will appear here...', 'आपका उत्तर यहां दिखाई देगा...')}
+                            </div>
+                        `
+                    })}
+                </div>
+            </div>
+        `;
+    }
+
+    // --- CHART LOGIC ---
+    function generateCandlestickData(basePrice) {
+        let data = []; let price = basePrice;
+        for (let i = 0; i < 30; i++) {
+            const open = price; const close = open + (Math.random() - 0.5) * 100;
+            const high = Math.max(open, close) + Math.random() * 50; const low = Math.min(open, close) - Math.random() * 50;
+            data.push({ date: `Day ${i + 1}`, ohlc: [Math.round(open), Math.round(high), Math.round(low), Math.round(close)] });
+            price = close;
+        }
+        return data;
+    }
+
+    function renderChart() {
+        const { ResponsiveContainer, ComposedChart, XAxis, YAxis, Tooltip, Candlestick, Cell } = window.Recharts;
+        // hide the placeholder image once the chart is about to render
+        const placeholder = document.getElementById('trade-sample-img');
+        if (placeholder) placeholder.style.display = 'none';
+         const data = generateCandlestickData(selectedOilseed.price);
+         const CustomTooltip = ({ active, payload }) => {
+             if (active && payload && payload.length) {
+                 const data = payload[0].payload.ohlc;
+                 return e('div', { className: 'bg-white/80 backdrop-blur-sm p-2 border rounded-lg shadow-lg' },
+                     e('p', { className: 'font-bold' }, `O: ${data[0]} H: ${data[1]}`),
+                     e('p', { className: 'font-bold' }, `L: ${data[2]} C: ${data[3]}`)
+                 );
+             }
+             return null;
+         };
+        const chart = e(ResponsiveContainer, { width: '100%', height: '100%' },
+            e(ComposedChart, { data: data, margin: { top: 5, right: 5, left: -30, bottom: 5 } },
+                e(XAxis, { dataKey: 'date', tickLine: false, axisLine: false, tickMargin: 8 }),
+                e(YAxis, { orientation: 'left', domain: ['dataMin - 100', 'dataMax + 100'], tickLine: false, axisLine: false, tickMargin: 8 }),
+                e(Tooltip, { content: CustomTooltip, cursor: { stroke: 'hsl(var(--primary))' } }),
+                e(Candlestick, { dataKey: 'ohlc', fill: 'hsl(var(--success))', stroke: 'hsl(var(--success))', isAnimationActive: false },
+                    data.map((entry, index) => e(Cell, { key: `cell-${index}`, fill: entry.ohlc[3] >= entry.ohlc[0] ? 'hsl(var(--success))' : 'hsl(var(--destructive))' }))
+                )
+            )
+        );
+        ReactDOM.render(chart, document.getElementById('chart-container'));
+    }
+
+
+    // --- MAIN APP LOGIC ---
+    const navItems = [
+        { id: 'dashboard', label: { en: 'Home', hi: 'होम' }, icon: 'Home' },
+        { id: 'predict', label: { en: 'Predict', hi: 'भविष्यवाणी' }, icon: 'BarChart3' },
+        { id: 'trade', label: { en: 'Trade', hi: 'व्यापार' }, icon: 'ArrowRightLeft' },
+        { id: 'contracts', label: { en: 'Contracts', hi: 'अनुबंध' }, icon: 'FileText' },
+        { id: 'learn', label: { en: 'Learn', hi: 'सीखें' }, icon: 'BookOpen' },
+    ];
+
+    function renderNav() {
+        const navContainer = document.querySelector('nav');
+
+        // Small inline SVGs so icons work without relying on external lucide runtime
+        const svgFor = (name) => {
+            switch(name) {
+                case 'Home': return `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mb-1"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V9.5z"/></svg>`;
+                case 'BarChart3': return `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mb-1"><path d="M3 3v18h2V8H3zM9 13v8h2v-5H9zM15 7v14h2V7h-2zM21 11v10h2V11h-2z"/></svg>`;
+                case 'ArrowRightLeft': return `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mb-1"><path d="M17 11l4 4-4 4"/><path d="M21 15H7"/><path d="M7 13L3 9l4-4"/><path d="M3 9h14"/></svg>`;
+                case 'FileText': return `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mb-1"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h8M8 9h4"/></svg>`;
+                case 'BookOpen': return `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mb-1"><path d="M2 3v18a1 1 0 0 0 1.447.894L12 19l8.553 2.894A1 1 0 0 0 22 21V3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1z"/><path d="M12 19V5"/></svg>`;
+                default: return '';
+            }
+        };
+
+        navContainer.innerHTML = navItems.map(item => `
+            <a href="#" class="nav-item flex flex-col items-center justify-center w-full h-full ${activePage === item.id ? 'text-primary' : 'text-muted-foreground'}" data-page="${item.id}">
+                <div class="icon-wrapper">${svgFor(item.icon)}</div>
+                <span class="text-xs font-medium">${t(item.label.en, item.label.hi)}</span>
+            </a>
+        `).join('');
+
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                activePage = item.dataset.page;
+                render();
+            });
+        });
+    }
+
+    async function handleFetchNews() {
+        const btn = document.getElementById('fetch-news-btn');
+        const contentDiv = document.getElementById('market-news-content');
+        btn.disabled = true;
+        btn.innerHTML = `<div class="loader"></div> <span class="ml-2">${t('Fetching...', 'लाया जा रहा है...')}</span>`;
+
+        const systemPrompt = "You are a financial news analyst for Indian agriculture. Provide a bulleted list of the top 3 recent news items or alerts related to the Indian oilseeds market (mustard, soybean, etc.). Mention any significant government policy changes, weather events, or NCDEX/MCX updates. Keep it concise.";
+        const userQuery = `Latest news and alerts for the Indian oilseeds market as of today, ${new Date().toLocaleDateString()}.`;
+        
+        const news = await callGeminiAPI(userQuery, systemPrompt, true);
+        contentDiv.innerHTML = news.replace(/\*/g, '•').replace(/\n/g, '<br>'); // Format response
+        btn.disabled = false;
+        btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-newspaper"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h4"/><path d="M16 2v20"/><path d="M8 7h4"/><path d="M8 12h4"/><path d="M8 17h4"/></svg> ${t('Fetch Latest News', 'नवीनतम समाचार प्राप्त करें')}`;
+    }
+
+    // --- Risk Assessment Logic ---
+    const riskAssessmentQuestions = [
+        {
+            question: { en: "What is your primary goal for using this platform?", hi: "इस प्लेटफॉर्म का उपयोग करने का आपका प्राथमिक लक्ष्य क्या है?" },
+            options: [
+                { text: { en: "Protect my crop value from falling prices.", hi: "मेरी फसल के मूल्य को गिरती कीमतों से बचाना।" }, value: 1 },
+                { text: { en: "Try to make a small profit with low risk.", hi: "कम जोखिम के साथ थोड़ा लाभ कमाने की कोशिश करना।" }, value: 2 },
+                { text: { en: "Aim for significant profits, even if it means higher risk.", hi: "उच्च जोखिम होने पर भी महत्वपूर्ण लाभ का लक्ष्य रखना।" }, value: 3 },
+            ]
+        },
+        {
+            question: { en: "If your virtual portfolio drops 15% in a month, how would you feel?", hi: "यदि आपका वर्चुअल पोर्टफोलियो एक महीने में 15% गिर जाता है, तो आप कैसा महसूस करेंगे?" },
+            options: [
+                { text: { en: "Very worried, I would stop trading immediately.", hi: "बहुत चिंतित, मैं तुरंत ट्रेडिंग बंद कर दूंगा।" }, value: 1 },
+                { text: { en: "Concerned, but I would wait and see.", hi: "चिंतित, लेकिन मैं इंतजार करूंगा और देखूंगा।" }, value: 2 },
+                { text: { en: "I see it as a chance to place new trades at a lower price.", hi: "मैं इसे कम कीमत पर नए ट्रेड लगाने के अवसर के रूप में देखता हूं।" }, value: 3 },
+            ]
+        },
+         {
+            question: { en: "How much experience do you have with financial markets (stocks, commodities)?", hi: "वित्तीय बाजारों (स्टॉक, कमोडिटीज) के साथ आपका कितना अनुभव है?" },
+            options: [
+                { text: { en: "None at all. This is my first time.", hi: "बिलकुल नहीं। यह मेरी पहली बार है।" }, value: 1 },
+                { text: { en: "I have some basic knowledge.", hi: "मुझे कुछ बुनियादी ज्ञान है।" }, value: 2 },
+                { text: { en: "I am quite experienced.", hi: "मैं काफी अनुभवी हूं।" }, value: 3 },
+            ]
+        }
+    ];
+    let currentQuestionIndex = 0;
+    let userAnswers = [];
+
+    function showRiskAssessment() {
+        currentQuestionIndex = 0;
+        userAnswers = [];
+        showModal(t('Risk Assessment', 'जोखिम मूल्यांकन'), renderQuizQuestion(), setupQuizListeners);
+    }
+    
+    function renderQuizQuestion() {
+        const q = riskAssessmentQuestions[currentQuestionIndex];
+        return `
+            <div id="quiz-content">
+                <p class="font-semibold mb-4">${currentQuestionIndex + 1}/${riskAssessmentQuestions.length}: ${t(q.question.en, q.question.hi)}</p>
+                <div id="quiz-options">
+                    ${q.options.map((opt, index) => `<button class="quiz-option" data-value="${opt.value}">${t(opt.text.en, opt.text.hi)}</button>`).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    function setupQuizListeners(modalId) {
+        const optionsContainer = document.querySelector(`#${modalId} #quiz-options`);
+        optionsContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('quiz-option')) {
+                const selectedValue = parseInt(e.target.dataset.value, 10);
+                userAnswers[currentQuestionIndex] = selectedValue;
+
+                // Visual feedback for selection
+                document.querySelectorAll(`#${modalId} .quiz-option`).forEach(btn => btn.classList.remove('selected'));
+                e.target.classList.add('selected');
+
+                setTimeout(() => {
+                    currentQuestionIndex++;
+                    if (currentQuestionIndex < riskAssessmentQuestions.length) {
+                        document.querySelector(`#${modalId} #quiz-content`).innerHTML = renderQuizQuestion();
+                    } else {
+                        calculateRiskProfile(modalId);
+                    }
+                }, 300); // Short delay for visual feedback
+            }
+        });
+    }
+
+    function calculateRiskProfile(modalId) {
+        const totalScore = userAnswers.reduce((sum, val) => sum + val, 0);
+        const avgScore = totalScore / riskAssessmentQuestions.length;
+
+        if (avgScore <= 1.5) userRiskProfile = 'Conservative';
+        else if (avgScore <= 2.5) userRiskProfile = 'Moderate';
+        else userRiskProfile = 'Aggressive';
+
+        const modalBody = document.querySelector(`#${modalId} .modal-body`);
+        modalBody.innerHTML = `
+            <div class="text-center p-4">
+                <h3 class="text-xl font-bold">${t('Your Risk Profile is:', 'आपकी जोखिम प्रोफ़ाइल है:')}</h3>
+                <p class="text-2xl font-bold text-primary mt-2">${t(userRiskProfile, userRiskProfile)}</p>
+                <p class="text-muted-foreground mt-2">${t('This will help us personalize your experience.', 'यह हमें आपके अनुभव को वैयक्तिकृत करने में मदद करेगा।')}</p>
+                <button id="close-quiz-btn" class="mt-4 w-full bg-primary text-white font-semibold py-2 rounded-lg">${t('Done', 'पूर्ण')}</button>
+            </div>
+        `;
+        document.getElementById('close-quiz-btn').addEventListener('click', () => {
+             closeModal(modalId);
+             render(); // Re-render the dashboard to show the new profile
+        });
+    }
+
+
+    async function handleAnalyzeFactors() {
+        // Show a modal with a practical list of factors (bilingual using t)
+        const currentSeed = oilseeds.find(s => s.id === document.getElementById('predict-oilseed-selector').value);
+        const title = `${t('Analysis for', 'के लिए विश्लेषण')} ${t(currentSeed.name.en, currentSeed.name.hi)}`;
+
+        const content = `
+            <div class="space-y-3 text-sm text-muted-foreground">
+                <p class="font-semibold mb-2">${t('Key factors likely to affect price in the next 30 days:', 'अगले 30 दिनों में कीमत को प्रभावित करने वाले प्रमुख कारक:')}</p>
+                <ul class="list-inside space-y-2">
+                    <li><strong>${t('Weather & Monsoon:', 'मौसम और मानसून:')}</strong> ${t('Erratic rainfall or extreme temperatures can reduce yields and tighten near-term supply.', 'अनियमित वर्षा या अत्यधिक तापमान उपज को घटा सकते हैं और अल्पकालिक आपूर्ति को सीमित कर सकते हैं।')}</li>
+                    <li><strong>${t('Sowing Area / Acreage:', 'बोवाई क्षेत्र / हेक्टेयर:')}</strong> ${t('Changes in acreage planted impact expected harvest volumes and market availability.', 'बोवाई में बदलाव अपेक्षित कटाई मात्रा और बाजार उपलब्धता को प्रभावित करते हैं।')}</li>
+                    <li><strong>${t('Government Policy & MSP / Exports:', 'सरकारी नीतियाँ और एमएसपी / निर्यात:')}</strong> ${t('Announcements on support prices, export bans or subsidies can quickly shift domestic prices.', 'समर्थन मूल्य, निर्यात प्रतिबंध या सब्सिडी पर घोषणाएँ घरेलू कीमतों को जल्दी बदल सकती हैं।')}</li>
+                    <li><strong>${t('International Prices & Global Demand:', 'अंतरराष्ट्रीय कीमतें और वैश्विक मांग:')}</strong> ${t('Global oilseed and edible oil trends (soybean, palm) affect import parity and local futures.', 'वैश्विक तिलहन और खाद्य तेल के रुझान (सोयाबीन, पाम) आयात समानता और स्थानीय वायदा कीमतों को प्रभावित करते हैं।')}</li>
+                    <li><strong>${t('Currency (INR vs USD):', 'मुद्रा (INR बनाम USD):')}</strong> ${t('A weaker rupee raises import costs, putting upward pressure on domestic prices.', 'कमज़ोर रुपया आयात लागत बढ़ाता है, जिससे घरेलू कीमतों पर ऊपर की ओर दबाव पड़ता है।')}</li>
+                    <li><strong>${t('Stocks & Carryover:', 'भंडार और बचा हुआ स्टॉक:')}</strong> ${t('Higher carryover and buffer stocks ease price spikes; low stocks make markets more sensitive.', 'अधिक बचा हुआ स्टॉक और भंडार कीमतों के उछाल को आसान बनाते हैं; कम भंडार से बाजार अधिक संवेदनशील होते हैं।')}</li>
+                    <li><strong>${t('Logistics & Storage:', 'लोजिस्टिक्स और भंडारण:')}</strong> ${t('Transport bottlenecks or storage losses can reduce effective supply to markets.', 'परिवहन बाधाएँ या भंडारण हानि बाजारों को उपलब्ध आपूर्ति घटा सकती हैं।')}</li>
+                    <li><strong>${t('Pests/Disease Outbreaks:', 'कीट/रोग की घटनाएँ:')}</strong> ${t('Localized pest or disease outbreaks can materially cut expected yields.', 'स्थानीय कीट या रोग की घटनाएँ अपेक्षित उपज को गंभीर रूप से घटा सकती हैं।')}</li>
+                </ul>
+                <p class="text-xs text-muted-foreground">${t('Tip: Monitor weather forecasts, government notifications, and MCX/NCDEX reports for quick updates.', 'सूचना: त्वरित अपडेट के लिए मौसम पूर्वानुमान, सरकारी सूचनाएँ और MCX/NCDEX रिपोर्ट देखें।')}</p>
+            </div>
+        `;
+
+        showModal(title, content);
+    }
+
+    function addPageEventListeners() {
+        document.getElementById('lang-toggle')?.addEventListener('click', () => {
+            currentLanguage = currentLanguage === 'en' ? 'hi' : 'en';
+            render();
+        });
+        
+        if (activePage === 'dashboard') {
+            document.getElementById('fetch-news-btn')?.addEventListener('click', handleFetchNews);
+            document.getElementById('take-risk-assessment-btn')?.addEventListener('click', showRiskAssessment);
+        }
+        
+        if (activePage === 'trade') {
+            document.getElementById('oilseed-selector').addEventListener('change', (e) => {
+                selectedOilseed = oilseeds.find(seed => seed.id === e.target.value);
+                render();
+            });
+            document.getElementById('buy-btn').addEventListener('click', () => showToast(t('Buy order placed!', 'खरीद आदेश दिया गया!'), 'success'));
+            document.getElementById('sell-btn').addEventListener('click', () => showToast(t('Sell order placed!', 'बिक्री आदेश दिया गया!'), 'destructive'));
+        }
+
+        if(activePage === 'predict') {
+             document.getElementById('get-factors-btn')?.addEventListener('click', handleAnalyzeFactors);
+        }
+
+        if(activePage === 'contracts') {
+            document.getElementById('create-contract-btn')?.addEventListener('click', showContractCreationModal);
+        }
+
+        if(activePage === 'learn') {
+             document.getElementById('ask-kisan-dost-btn')?.addEventListener('click', handleAskKisanDost);
+             document.getElementById('hedging-strategies-card')?.addEventListener('click', showHedgingStrategies);
+        }
+    }
+
+    function render() {
+        const mainContent = document.getElementById('main-content');
+        let pageHtml = '';
+        switch (activePage) {
+            case 'trade': pageHtml = renderTrade(); break;
+            case 'predict': pageHtml = renderPredict(); break;
+            case 'contracts': pageHtml = renderContracts(); break;
+            case 'learn': pageHtml = renderLearn(); break;
+            default: pageHtml = renderDashboard();
+        }
+        mainContent.innerHTML = pageHtml;
+        renderNav();
+        addPageEventListeners();
+
+        if (activePage === 'trade') {
+            const attemptRenderChart = () => {
+                if (window.Recharts) renderChart();
+                else setTimeout(attemptRenderChart, 50);
+            };
+            attemptRenderChart();
+        }
+    }
+
+    window.addEventListener('load', render);
+    </script>
+</body>
+</html>
+
