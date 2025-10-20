@@ -352,8 +352,8 @@
              <div class="page p-4" id="dashboard">
                  <header class="flex justify-between items-center mb-4">
                      <div>
-                         <h1 class="text-2xl font-bold text-foreground">Hello, Sanjay! 👋</h1>
-                         <p class="text-muted-foreground">Patna, Bihar • 28°C ☀️</p>
+                         <h1 class="text-2xl font-bold text-foreground">${t("Hello, Sanjay! 👋", "नमस्ते, संजय! 👋")}</h1>
+                         <p class="text-muted-foreground">${t('Patna, Bihar • 28°C ☀️', 'पटना, बिहार • 28°C ☀️')}</p>
                      </div>
                      <div class="flex items-center gap-4">
                           <div id="lang-toggle" class="cursor-pointer text-primary">
@@ -373,26 +373,26 @@
                                 <div class="flex items-center justify-between">
                                     <div class="flex-1">
                                         <div class="flex items-center gap-3">
-                                            <div class="text-sm opacity-80">Overall Balance</div>
+                                            <div class="text-sm opacity-80">${t('Overall Balance', 'कुल शेष')}</div>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
                                         </div>
                                         <div class="text-2xl md:text-3xl font-extrabold mt-1">₹2,50,000</div>
                                         <div class="mt-1 flex items-center gap-2 text-sm text-emerald-300">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V6"/><path d="M5 12l7-7 7 7"/></svg>
                                             <div>
-                                                <div class="font-semibold leading-tight">Overall Gain ₹3,45,678</div>
+                                                <div class="font-semibold leading-tight">${t('Overall Gain ₹3,45,678', 'कुल लाभ ₹3,45,678')}</div>
                                                 <div class="text-xs opacity-80">(+17.28%)</div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="w-48 text-right pl-4">
-                                        <div class="text-sm opacity-70">Invested Value</div>
+                                        <div class="text-sm opacity-70">${t('Invested Value', 'निवेशित मूल्य')}</div>
                                         <div class="font-semibold text-lg mt-1">₹20,00,000</div>
-                                        <div class="mt-2 text-sm opacity-75">Today's Loss</div>
+                                        <div class="mt-2 text-sm opacity-75">${t("Today's Loss", "आज का नुकसान")}</div>
                                         <div class="font-semibold text-rose-300 mt-1">-₹5,678.03 <span class="text-xs opacity-80">(-6.54%)</span></div>
                                         <div class="mt-3">
-                                            <button class="uppercase text-xs font-semibold tracking-wide px-3 py-2 rounded-md border border-white/20 bg-white/6 hover:bg-white/8">VERIFY TO SELL</button>
+                                            <button class="uppercase text-xs font-semibold tracking-wide px-3 py-2 rounded-md border border-white/20 bg-white/6 hover:bg-white/8">${t('VERIFY TO SELL', 'बेचने के लिए सत्यापित करें')}</button>
                                         </div>
                                     </div>
                                 </div>
@@ -405,36 +405,36 @@
                      ${Card({
                          className: 'mb-6',
                          children: `
-                             <h3 class="font-bold mb-2">My Contracts</h3>
+                             <h3 class="font-bold mb-2">${t('My Contracts', 'मेरे अनुबंध')}</h3>
                              <div class="bg-card p-3 rounded-lg border">
                                  <div class="flex justify-between items-start mb-3">
                                      <div>
                                          <p class="font-bold text-lg">AgriCorp Foods</p>
-                                         <p class="text-sm text-muted-foreground">Contract #CNT001</p>
+                                         <p class="text-sm text-muted-foreground">${t('Contract #CNT001','अनुबंध #CNT001')}</p>
                                      </div>
-                                     <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full">Confirmed</span>
+                                     <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full">${t('Confirmed','पुष्टि')}</span>
                                  </div>
                                  <div class="grid grid-cols-2 gap-4">
                                      <div>
-                                         <p class="text-sm text-muted-foreground">Crop</p>
-                                         <p class="font-semibold">Mustard</p>
+                                         <p class="text-sm text-muted-foreground">${t('Crop','फसल')}</p>
+                                         <p class="font-semibold">${t('Mustard','सरसों')}</p>
                                      </div>
                                      <div>
-                                         <p class="text-sm text-muted-foreground">Quantity</p>
-                                         <p class="font-semibold">100 Quintal</p>
+                                         <p class="text-sm text-muted-foreground">${t('Quantity','मात्रा')}</p>
+                                         <p class="font-semibold">100 ${t('Quintal','क्विंटल')}</p>
                                      </div>
                                      <div>
-                                         <p class="text-sm text-muted-foreground">Per Quintal</p>
+                                         <p class="text-sm text-muted-foreground">${t('Per Quintal','प्रति क्विंटल')}</p>
                                          <p class="font-semibold">₹5,400</p>
                                      </div>
                                      <div>
-                                         <p class="text-sm text-muted-foreground">Total Value</p>
+                                         <p class="text-sm text-muted-foreground">${t('Total Value','कुल मूल्य')}</p>
                                          <p class="font-semibold">₹5,40,000</p>
                                      </div>
                                  </div>
                                  <div class="border-t mt-4 pt-4 flex justify-between items-center text-sm">
-                                     <p class="text-muted-foreground">Delivery: 15 Mar, 2026</p>
-                                     <a href="#" class="text-primary font-semibold">View Details</a>
+                                     <p class="text-muted-foreground">${t('Delivery: 15 Mar, 2026', 'डिलीवरी: 15 मार्च, 2026')}</p>
+                                     <a href="#" class="text-primary font-semibold">${t('View Details','विवरण देखें')}</a>
                                  </div>
                              </div>
                          `
@@ -442,7 +442,7 @@
                  </div>
  
                  <div class="flex justify-between items-center mb-3">
-                     <h2 class="text-xl font-bold">${t('Today\'s Prices', 'आज की कीमतें')}</h2>
+                     <h2 class="text-xl font-bold">${t("Today's Prices", "आज की कीमतें")}</h2>
                  </div>
                  
                  <div class="space-y-3">
@@ -598,11 +598,16 @@
                     ${Card({
                         children: `
                             <div class="flex justify-between items-start">
-                               <div><p class="font-bold text-lg">AgriCorp Foods</p><p class="text-sm text-muted-foreground">${t('अनुबंध #CNT001', 'Contract #CNT001')}</p></div>
+                               <div><p class="font-bold text-lg">AgriCorp Foods</p><p class="text-sm text-muted-foreground">${t('Contract #CNT001', 'अनुबंध #CNT001')}</p></div>
                                 <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full">${t('Confirmed', 'पुष्टि')}</span>
                             </div>
-                            <div class="grid grid-cols-2 gap-4 mt-4 border-t pt-4"><div><p class="text-sm text-muted-foreground">${t('Crop', 'फसल')}</p><p class="font-semibold">${t('सरसों', 'Mustard')}</p></div><div><p class="text-sm text-muted-foreground">${t('Quantity', 'मात्रा')}</p><p class="font-semibold">100 ${t('क्विंटल', 'Quintal')}</p></div><div class="hidden md:block"><p class="text-sm text-muted-foreground">${t('Per Quintal', 'प्रति क्विंटल')}</p><p class="font-semibold">₹5,400</p></div><div class="hidden md:block"><p class="text-sm text-muted-foreground">${t('Total Value', 'कुल मूल्य')}</p><p class="font-semibold">₹5,40,000</p></div></div>
-                            <div class="border-t mt-4 pt-4 flex justify-between items-center text-sm"><p class="text-muted-foreground">${t('Delivery: 15 मार्च, 2026', 'Delivery: 15 Mar, 2026')}</p><a href="#" class="text-primary font-semibold">${t('View Details', 'विवरण देखें')}</a></div>
+                            <div class="grid grid-cols-2 gap-4 mt-4 border-t pt-4">
+                                <div><p class="text-sm text-muted-foreground">${t('Crop', 'फसल')}</p><p class="font-semibold">${t('Mustard', 'सरसों')}</p></div>
+                                <div><p class="text-sm text-muted-foreground">${t('Quantity', 'मात्रा')}</p><p class="font-semibold">100 ${t('Quintal', 'क्विंटल')}</p></div>
+                                <div class="hidden md:block"><p class="text-sm text-muted-foreground">${t('Per Quintal', 'प्रति क्विंटल')}</p><p class="font-semibold">₹5,400</p></div>
+                                <div class="hidden md:block"><p class="text-sm text-muted-foreground">${t('Total Value', 'कुल मूल्य')}</p><p class="font-semibold">₹5,40,000</p></div>
+                            </div>
+                            <div class="border-t mt-4 pt-4 flex justify-between items-center text-sm"><p class="text-muted-foreground">${t('Delivery: 15 Mar, 2026', 'Delivery: 15 मार्च, 2026')}</p><a href="#" class="text-primary font-semibold">${t('View Details', 'विवरण देखें')}</a></div>
                         `
                     })}
                 </div>
@@ -613,7 +618,20 @@
     function renderLearn() {
         return `
              <div class="page" id="learn">
-                 <header class="p-4 bg-white border-b"><div class="flex justify-between items-center"><h1 class="text-2xl font-bold">${t('Learning Hub', 'लर्निंग हब')}</h1><div class="w-8 h-8 bg-secondary rounded-full"></div></div></header>
+                 <header class="p-4 bg-white border-b">
+                     <div class="flex justify-between items-center">
+                        <div>
+                           <h1 class="text-2xl font-bold">${t('Learning Hub', 'लर्निंग हब')}</h1>
+                           <p class="text-sm text-muted-foreground">${t('Bite-sized lessons & resources', 'संक्षिप्त पाठ और संसाधन')}</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <!-- Profile icon -->
+                            <div class="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                        </div>
+                     </div>
+                 </header>
                 <div class="p-4 space-y-4">
                      <div class="grid grid-cols-2 gap-4">
                         ${Card({ className: 'text-center', children: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 mx-auto mb-2 text-primary"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" class="text-primary" /></svg><p class="font-semibold mt-1">${t('Video Lessons', 'वीडियो पाठ')}</p>`})}
@@ -630,25 +648,84 @@
                             <p class="text-muted-foreground text-sm mt-1">${t('Learn how to protect your crop prices using virtual hedging techniques.', 'वर्चुअल हेजिंग तकनीकों का उपयोग करके अपनी फसल की कीमतों की रक्षा करना सीखें।')}</p>
                         `
                      })}
+                     
+                     <!-- Visual Roadmap -->
                      ${Card({
                         className: 'mt-4',
                         children: `
-                            <h2 class="text-xl font-bold mb-2">✨ ${t('AI Kisan Dost', 'एआई किसान दोस्त')}</h2>
-                            <p class="text-muted-foreground mb-3">${t('Have a question about trading? Ask your AI friend!', 'व्यापार के बारे में कोई प्रश्न है? अपने एआई दोस्त से पूछें!')}</p>
-                            <textarea id="kisan-dost-question" class="w-full p-2 border rounded-lg bg-secondary" rows="3" placeholder="${t('e.g., What is a futures contract?', 'जैसे, वायदा अनुबंध क्या है?')}"></textarea>
-                            <button id="ask-kisan-dost-btn" class="mt-2 w-full bg-primary text-white font-semibold py-2 rounded-lg flex items-center justify-center gap-2">
-                                ${t('Ask Question', 'प्रश्न पूछें')}
-                            </button>
-                            <div id="kisan-dost-answer" class="mt-4 text-sm text-muted-foreground bg-secondary p-3 rounded-lg min-h-[4rem]">
-                                ${t('Your answer will appear here...', 'आपका उत्तर यहां दिखाई देगा...')}
+                            <h2 class="text-xl font-bold mb-3">${t('Learning Roadmap', 'लर्निंग रोडमैप')}</h2>
+                            <div class="space-y-3">
+                                <div class="flex items-start gap-3">
+                                    <div class="w-3 h-3 rounded-full bg-primary mt-1"></div>
+                                    <div>
+                                        <div class="font-semibold">${t('Basics of Futures', 'वायदा का परिचय')}</div>
+                                        <div class="text-sm text-muted-foreground">${t('Understand contracts, lot sizes and expiry.', 'अनुबंध, लॉट साइज और समाप्ति समझें।')}</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="w-3 h-3 rounded-full bg-primary mt-1"></div>
+                                    <div>
+                                        <div class="font-semibold">${t('Hedging Techniques', 'हेजिंग तकनीकें')}</div>
+                                        <div class="text-sm text-muted-foreground">${t('Virtual hedges and risk reduction.', 'वर्चुअल हेज और जोखिम में कमी।')}</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="w-3 h-3 rounded-full bg-primary mt-1"></div>
+                                    <div>
+                                        <div class="font-semibold">${t('Reading Market Depth', 'बाजार की गहराई पढ़ना')}</div>
+                                        <div class="text-sm text-muted-foreground">${t('How to interpret bids and asks.', 'बोली और पूछ पढ़ना सीखें।')}</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <div class="w-3 h-3 rounded-full bg-primary mt-1"></div>
+                                    <div>
+                                        <div class="font-semibold">${t('Placing Orders', 'ऑर्डर देना')}</div>
+                                        <div class="text-sm text-muted-foreground">${t('Buy/sell and order types.', 'खरीद/बेच और ऑर्डर प्रकार।')}</div>
+                                    </div>
+                                </div>
                             </div>
                         `
-                    })}
+                     })}
+
+                     <!-- Floating Kisan Chat trigger (inside app frame) + hidden chat widget -->
+                     <div id="kisan-chat-root" class="relative">
+                         <!-- Floating button (positioned inside #app) -->
+                         <button id="kisan-float-btn" class="absolute bottom-20 right-4 bg-primary text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center z-40" title="${t('Kisan Dost', 'किसान दोस्त')}">
+                             <!-- farmer icon -->
+                             <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c3 0 5 1.5 5 3.5S15 9 12 9s-5-2.5-5-3.5S9 2 12 2z"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6v2H4v-2z"/></svg>
+                         </button>
+
+                         <!-- Chat panel (positioned inside #app) -->
+                         <div id="kisan-chat-panel" class="absolute bottom-4 right-4 w-80 bg-white border rounded-xl shadow-xl z-50 hidden">
+                             <div class="p-3 border-b flex items-center justify-between">
+                                 <div class="flex items-center gap-3">
+                                     <div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
+                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c3 0 5 1.5 5 3.5S15 9 12 9s-5-2.5-5-3.5S9 2 12 2z"/></svg>
+                                     </div>
+                                     <div>
+                                         <div class="font-semibold">${t('Kisan Dost', 'किसान दोस्त')}</div>
+                                         <div class="text-xs text-muted-foreground">${t('Hello — how can I help you?', 'नमस्ते — मैं आपकी कैसे मदद कर सकता हूँ?')}</div>
+                                     </div>
+                                 </div>
+                                 <button id="kisan-close-btn" class="text-muted-foreground">✕</button>
+                             </div>
+                             <div id="kisan-messages" class="p-3 space-y-2 h-40 overflow-auto text-sm">
+                                 <div class="bg-secondary p-2 rounded"><strong>${t('Kisan Dost', 'किसान दोस्त')}:</strong> ${t('Hello! How can I help you with trading today?', 'नमस्ते! मैं आज ट्रेडिंग में आपकी कैसे मदद कर सकता हूँ?')}</div>
+                             </div>
+                             <div class="p-3 border-t">
+                                 <div class="flex gap-2">
+                                     <input id="kisan-input" class="flex-1 p-2 border rounded" placeholder="${t('Ask a question...', 'एक प्रश्न पूछें...')}" />
+                                     <button id="kisan-send-btn" class="bg-primary text-white px-3 py-2 rounded">${t('Send','भेजें')}</button>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+
                 </div>
             </div>
         `;
     }
-
+    
     // --- CHART LOGIC ---
     function generateCandlestickData(basePrice) {
         let data = []; let price = basePrice;
@@ -895,11 +972,61 @@
         }
 
         if(activePage === 'learn') {
-             document.getElementById('ask-kisan-dost-btn')?.addEventListener('click', handleAskKisanDost);
+             // initialize kisan chat listeners after dom is ready
+             setTimeout(() => initKisanChat(), 50);
              document.getElementById('hedging-strategies-card')?.addEventListener('click', showHedgingStrategies);
         }
     }
 
+    function initKisanChat() {
+        // called after render -> add event listeners for chat controls
+        const floatBtn = document.getElementById('kisan-float-btn');
+        const panel = document.getElementById('kisan-chat-panel');
+        const closeBtn = document.getElementById('kisan-close-btn');
+        const sendBtn = document.getElementById('kisan-send-btn');
+        const input = document.getElementById('kisan-input');
+        const msgs = document.getElementById('kisan-messages');
+
+        if (!floatBtn || !panel) return;
+
+        floatBtn.addEventListener('click', () => {
+            panel.classList.toggle('hidden');
+            // focus input when opened
+            setTimeout(() => input?.focus(), 100);
+        });
+
+        closeBtn?.addEventListener('click', () => panel.classList.add('hidden'));
+
+        sendBtn?.addEventListener('click', async () => {
+            const text = input.value.trim();
+            if (!text) return;
+            // append user message
+            const userNode = document.createElement('div');
+            userNode.className = 'text-right';
+            userNode.innerHTML = `<div class="inline-block bg-primary text-white p-2 rounded">${text}</div>`;
+            msgs.appendChild(userNode);
+            msgs.scrollTop = msgs.scrollHeight;
+            input.value = '';
+            // minimal simulated response (replace with callGeminiAPI if desired)
+            const replyNode = document.createElement('div');
+            replyNode.className = 'bg-secondary p-2 rounded';
+            replyNode.innerHTML = `<strong>${t('Kisan Dost', 'किसान दोस्त')}:</strong> ${t('Looking into that — here is a quick tip: check nearby mandi prices and recent rain forecast.', 'उस बारे में देख रहा हूँ — एक त्वरित सुझाव: नज़दीकी मंडी की कीमतें और हालिया वर्षा पूर्वानुमान देखें।')}`;
+            setTimeout(() => {
+                msgs.appendChild(replyNode);
+                msgs.scrollTop = msgs.scrollHeight;
+            }, 600);
+        });
+
+        // allow Enter to send
+        input?.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendBtn?.click();
+            }
+        });
+    }
+
+    // --- RENDER AND INIT ---
     function render() {
         const mainContent = document.getElementById('main-content');
         let pageHtml = '';
