@@ -708,7 +708,20 @@
                         className: 'mt-4',
                         children: `
                             <h2 class="text-xl font-bold">${t('Featured Video', 'विशेष रुप से प्रदर्शित वीडियो')}</h2>
-                            <div class="aspect-video bg-secondary rounded-lg flex items-center justify-center my-3"><div class="w-12 h-12 bg-black/20 rounded-full flex items-center justify-center cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
+
+                            <!-- Thumbnail with play overlay. uses assets/CC9VeHrI3Es-HD.jpg and falls back to assets/CC9VeHrI3Es-HDjpg if needed -->
+                            <div class="aspect-video bg-secondary rounded-lg overflow-hidden my-3 relative">
+                                <img src="./assets/CC9VeHrI3Es-HD.jpg"
+                                     onerror="this.onerror=null;this.src='./assets/CC9VeHrI3Es-HDjpg';"
+                                     alt="${t('Featured video thumbnail','विशेष वीडियो थंबनेल')}"
+                                     class="w-full h-full object-cover" />
+                                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    <div class="w-14 h-14 bg-black/50 rounded-full flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                                    </div>
+                                </div>
+                            </div>
+
                             <h3 class="font-bold text-lg">${t('Understanding Futures Trading for Farmers', 'किसानों के लिए वायदा कारोबार को समझना')}</h3>
                             <p class="text-muted-foreground text-sm mt-1">${t('Learn how to protect your crop prices using virtual hedging techniques.', 'वर्चुअल हेजिंग तकनीकों का उपयोग करके अपनी फसल की कीमतों की रक्षा करना सीखें।')}</p>
                         `
@@ -1001,7 +1014,7 @@
                 render();
             });
             document.getElementById('buy-btn').addEventListener('click', () => showToast(t('Buy order placed!', 'खरीद आदेश दिया गया!'), 'success'));
-            document.getElementById('sell-btn').addEventListener('click', () => showToast(t('Sell order placed!', 'बिक्री आदेश दिया गया!'), 'destructive'));
+            document.getElementById('sell-btn').addEventListener('click', () => showToast(t('Sell order placed!', 'बेचने का आदेश दिया गया!'), 'destructive'));
         }
 
         if(activePage === 'predict') {
@@ -1051,4 +1064,3 @@
     </script>
 </body>
 </html>
-
