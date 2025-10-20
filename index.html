@@ -346,410 +346,126 @@
     
     // --- PAGE RENDERING FUNCTIONS ---
     function renderDashboard() {
-        let riskProfileHtml = `
-            <p class="text-sm text-muted-foreground">${t('Complete the assessment to find out your risk profile.', 'अपनी जोखिम प्रोफ़ाइल जानने के लिए मूल्यांकन पूरा करें।')}</p>
-            <button id="take-risk-assessment-btn" class="mt-2 w-full bg-secondary text-secondary-foreground font-semibold py-2 rounded-lg">${t('Take Risk Assessment', 'जोखिम मूल्यांकन करें')}</button>
-        `;
-
-        if (userRiskProfile) {
-            const profileColors = {
-                'Conservative': 'bg-blue-100 text-blue-800',
-                'Moderate': 'bg-yellow-100 text-yellow-800',
-                'Aggressive': 'bg-red-100 text-red-800'
-            };
-            riskProfileHtml = `
-                <div class="flex justify-between items-center">
-                    <p class="text-sm text-muted-foreground">${t('Your Profile', 'आपकी प्रोफ़ाइल')}</p>
-                    <span class="text-sm font-semibold px-2 py-1 rounded-full ${profileColors[userRiskProfile]}">${t(userRiskProfile, userRiskProfile)}</span>
-                </div>
-                <p class="text-lg font-bold mt-1">${t(userRiskProfile, userRiskProfile)}</p>
-            `;
-        }
-
-        return `
-            <div class="page p-4" id="dashboard">
-                <header class="flex justify-between items-center mb-4">
-                    <div>
-                        <h1 class="text-2xl font-bold text-foreground">Hello, Sanjay! 👋</h1>
-                        <p class="text-muted-foreground">Patna, Bihar • 28°C ☀️</p>
-                    </div>
-                    <div class="flex items-center gap-4">
-                         <div id="lang-toggle" class="cursor-pointer text-primary">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-languages"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
+        // Removed Risk Profile & Market News (replaced by My Contracts card as requested)
+ 
+         return `
+             <div class="page p-4" id="dashboard">
+                 <header class="flex justify-between items-center mb-4">
+                     <div>
+                         <h1 class="text-2xl font-bold text-foreground">Hello, Sanjay! 👋</h1>
+                         <p class="text-muted-foreground">Patna, Bihar • 28°C ☀️</p>
+                     </div>
+                     <div class="flex items-center gap-4">
+                          <div id="lang-toggle" class="cursor-pointer text-primary">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-languages"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
+                          </div>
+                         <div class="relative">
+                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+                             <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-destructive rounded-full border-2 border-background"></span>
                          </div>
-                        <div class="relative">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-                            <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-destructive rounded-full border-2 border-background"></span>
+                     </div>
+                 </header>
+ 
+                 <div class="mb-4">
+                    <div class="grid grid-cols-3 gap-3 mb-4">
+                        <div class="col-span-3">
+                            <div class="rounded-xl overflow-hidden shadow-lg bg-gradient-to-r from-slate-900 to-slate-800 text-white p-4 min-h-[88px]">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-3">
+                                            <div class="text-sm opacity-80">Overall Balance</div>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 opacity-80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                                        </div>
+                                        <div class="text-2xl md:text-3xl font-extrabold mt-1">₹2,50,000</div>
+                                        <div class="mt-1 flex items-center gap-2 text-sm text-emerald-300">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V6"/><path d="M5 12l7-7 7 7"/></svg>
+                                            <div>
+                                                <div class="font-semibold leading-tight">Overall Gain ₹3,45,678</div>
+                                                <div class="text-xs opacity-80">(+17.28%)</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="w-48 text-right pl-4">
+                                        <div class="text-sm opacity-70">Invested Value</div>
+                                        <div class="font-semibold text-lg mt-1">₹20,00,000</div>
+                                        <div class="mt-2 text-sm opacity-75">Today's Loss</div>
+                                        <div class="font-semibold text-rose-300 mt-1">-₹5,678.03 <span class="text-xs opacity-80">(-6.54%)</span></div>
+                                        <div class="mt-3">
+                                            <button class="uppercase text-xs font-semibold tracking-wide px-3 py-2 rounded-md border border-white/20 bg-white/6 hover:bg-white/8">VERIFY TO SELL</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </header>
-
-                <div class="grid grid-cols-3 gap-3 mb-4 text-center">
-                    ${Card({ className: 'col-span-1', children: `<p class="text-sm text-muted-foreground">${t('Virtual Balance', 'वर्चुअल बैलेंस')}</p><p class="text-lg font-bold">₹2,50,000</p>`})}
-                    ${Card({ className: 'col-span-1', children: `<p class="text-sm text-muted-foreground">${t('Active', 'सक्रिय अनुबंध')}</p><p class="text-lg font-bold">3</p>`})}
-                    ${Card({ className: 'col-span-1', children: `<p class="text-sm text-muted-foreground">${t('Profit/Loss', 'लाभ/हानि')}</p><p class="text-lg font-bold text-success">+₹8,400</p>`})}
                 </div>
-
-                ${Card({ className: 'mb-4', children: `
-                    <h3 class="font-bold mb-2">${t('Risk Profile', 'जोखिम प्रोफ़ाइल')}</h3>
-                    ${riskProfileHtml}
-                `})}
-                
-                ${Card({
-                    className: 'mb-6',
-                    children: `
-                        <p class="font-bold mb-2">${t('Market News & Alerts', 'बाजार समाचार और अलर्ट')}</p>
-                        <div id="market-news-content" class="text-muted-foreground text-sm min-h-[4rem]">
-                           ${t('Get the latest AI-powered news affecting the oilseeds market.', 'तिलहन बाजार को प्रभावित करने वाली नवीनतम एआई-संचालित खबरें प्राप्त करें।')}
-                        </div>
-                        <button id="fetch-news-btn" class="mt-2 w-full bg-secondary text-secondary-foreground font-semibold py-2 rounded-lg flex items-center justify-center gap-2">
-                           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-newspaper"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h4"/><path d="M16 2v20"/><path d="M8 7h4"/><path d="M8 12h4"/><path d="M8 17h4"/></svg>
-                           ${t('Fetch Latest News', 'नवीनतम समाचार प्राप्त करें')}
-                        </button>
-                    `
-                })}
-
-                <div class="flex justify-between items-center mb-3">
-                    <h2 class="text-xl font-bold">${t('Today\'s Prices', 'आज की कीमतें')}</h2>
-                </div>
-                
-                <div class="space-y-3">
-                    ${oilseeds.slice(0, 3).map(seed => Card({
-                        children: `
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <p class="font-bold text-lg">${t(seed.name.en, seed.name.hi)}</p>
-                                    <p class="text-sm text-muted-foreground">${t('per Quintal', 'प्रति क्विंटल')}</p>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-bold text-lg">₹${seed.price.toLocaleString('en-IN')}</p>
-                                    <p class="text-sm font-semibold ${seed.change >= 0 ? 'text-success' : 'text-destructive'}">
-                                        ${seed.change >= 0 ? '▲' : '▼'} ${Math.abs(seed.change)}%
-                                    </p>
-                                </div>
-                            </div>
-                        `
-                    })).join('')}
-                </div>
-            </div>
-        `;
-    }
-
-    function renderTrade() {
-        return `
-            <div class="page" id="trade">
-                <header class="p-4 bg-white border-b sticky top-0 z-10">
-                    <h1 class="text-2xl font-bold text-center">${t('Futures Trading', 'वायदा कारोबार')}</h1>
-                    <p class="text-center text-muted-foreground">${t('Oilseeds Futures Market', 'तिलहन वायदा बाजार')}</p>
-                </header>
-                <div class="p-4 space-y-4">
-                    <select id="oilseed-selector" class="w-full p-3 border rounded-lg bg-secondary font-semibold text-lg">
-                        ${oilseeds.map(seed => `<option value="${seed.id}" ${seed.id === selectedOilseed.id ? 'selected' : ''}>${t(seed.name.en, seed.name.hi)}</option>`).join('')}
-                    </select>
-                    
-                    ${Card({
-                        className: 'text-center',
-                        children: `
-                            <div class="flex items-center justify-center gap-2">
-                                <h2 class="text-xl font-bold">${t(selectedOilseed.name.en, selectedOilseed.name.hi)}</h2>
-                                <span class="bg-destructive text-white text-xs font-semibold px-2 py-1 rounded-full">LIVE</span>
-                            </div>
-                            <p class="text-sm text-muted-foreground">${t('Spot Price', 'हाजिर मूल्य')}</p>
-                            <p class="text-4xl font-bold my-1">₹${selectedOilseed.price.toLocaleString('en-IN')}</p>
-                            <p class="text-muted-foreground">${t('per Quintal', 'प्रति क्विंटल')}</p>
-                        `
-                    })}
-
-                    <div class="w-full h-64">
-                        <div class="chart-area relative w-full h-64 rounded-lg overflow-hidden bg-black">
-                            <!-- Place your candlestick sample image here.
-                                 Put the image at: /Users/mdmahbubreza/Desktop/zz/assets/candlestick-sample.png
-                                 or update the src to your preferred path. -->
-                            <img id="trade-sample-img" src="./assets/download.jpeg" alt="Candlestick sample"
-                                 class="absolute inset-0 w-full h-full object-contain" style="background-color:#061826" />
-                            <div id="chart-container" class="absolute inset-0 p-2"></div>
-                        </div>
-                    </div>
-                    
-                    ${Card({
-                        children: `
-                            <h3 class="text-lg font-bold mb-3">${t('Market Depth', 'बाजार की गहराई')}</h3>
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <p class="font-semibold text-success text-center mb-2">${t('BUY (Bid)', 'खरीदें (बोली)')}</p>
-                                    <div class="space-y-1 text-sm"><div class="flex justify-between p-1 bg-green-50 rounded"><span class="font-medium text-success">₹${(selectedOilseed.price + 20).toLocaleString('en-IN')}</span> <span class="text-muted-foreground">45Q</span></div><div class="flex justify-between p-1"><span class="font-medium text-success">₹${(selectedOilseed.price + 10).toLocaleString('en-IN')}</span> <span class="text-muted-foreground">82Q</span></div><div class="flex justify-between p-1 bg-green-50 rounded"><span class="font-medium text-success">₹${selectedOilseed.price.toLocaleString('en-IN')}</span> <span class="text-muted-foreground">120Q</span></div></div>
-                                </div>
-                                <div>
-                                    <p class="font-semibold text-destructive text-center mb-2">${t('SELL (Ask)', 'बेचें (पूछें)')}</p>
-                                    <div class="space-y-1 text-sm"><div class="flex justify-between p-1 bg-red-50 rounded"><span class="font-medium text-destructive">₹${(selectedOilseed.price + 40).toLocaleString('en-IN')}</span> <span class="text-muted-foreground">38Q</span></div><div class="flex justify-between p-1"><span class="font-medium text-destructive">₹${(selectedOilseed.price + 50).toLocaleString('en-IN')}</span> <span class="text-muted-foreground">65Q</span></div><div class="flex justify-between p-1 bg-red-50 rounded"><span class="font-medium text-destructive">₹${(selectedOilseed.price + 60).toLocaleString('en-IN')}</span> <span class="text-muted-foreground">95Q</span></div></div>
-                                </div>
-                            </div>
-                            <div class="text-center mt-4"><p class="text-sm text-muted-foreground">${t('Total Volume', 'कुल मात्रा')}</p><p class="font-bold text-lg">2840 Quintals</p></div>
-                        `
-                    })}
-                </div>
-                <div class="fixed bottom-16 left-0 right-0 max-w-md mx-auto p-4 bg-white border-t grid grid-cols-2 gap-4">
-                    <button id="buy-btn" class="w-full bg-primary text-white font-bold py-3 rounded-lg">${t('BUY', 'खरीदें')}</button>
-                    <button id="sell-btn" class="w-full bg-destructive text-white font-bold py-3 rounded-lg">${t('SELL', 'बेचें')}</button>
-                </div>
-            </div>
-        `;
-    }
-    
-    function renderPredict() {
-        return `
-            <div class="page" id="predict">
-                 <header class="p-4 bg-primary text-primary-foreground">
-                    <h1 class="text-2xl font-bold text-center">${t('AI Price Prediction', 'एआई मूल्य भविष्यवाणी')}</h1>
-                    <p class="text-center text-primary-foreground/80">${t('Make Data-Driven Decisions', 'डेटा-संचालित निर्णय लें')}</p>
-                </header>
-                <div class="p-4 space-y-4">
-                    ${Card({
-                        children: `
-                            <div>
-                                <label class="font-semibold">${t('Select Crop', 'फसल चुनें')}</label>
-                                <select id="predict-oilseed-selector" class="w-full mt-1 p-2 border rounded-lg bg-secondary">${oilseeds.map(seed => `<option value="${seed.id}" ${seed.id === selectedOilseed.id ? 'selected' : ''}>${t(seed.name.en, seed.name.hi)}</option>`).join('')}</select>
-                            </div>
-                            <div class="mt-4">
-                                <label class="font-semibold">${t('Time Horizon', 'समय सीमा')}</label>
-                                <div class="grid grid-cols-3 gap-2 mt-1">
-                                    <button class="bg-primary text-white p-2 rounded-lg">${t('30 Days', '30 दिन')}</button>
-                                    <button class="bg-secondary p-2 rounded-lg">${t('60 Days', '60 दिन')}</button>
-                                    <button class="bg-secondary p-2 rounded-lg">${t('90 Days', '90 दिन')}</button>
-                                </div>
-                            </div>
-                        `
-                    })}
+ 
+                 <div class="mb-4">
                      ${Card({
-                        children: `
-                           <div class="flex justify-between items-center mb-4">
-                             <h3 class="text-lg font-bold">${t('Prediction Result', 'भविष्यवाणी परिणाम')}</h3>
-                             <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full">${t('High Confidence', 'उच्च आत्मविश्वास')}</span>
-                           </div>
-                           <div class="grid grid-cols-2 gap-4 mb-4">
-                               <div class="bg-secondary p-3 rounded-lg text-center"><p class="text-sm text-muted-foreground">${t('Current Price', 'वर्तमान मूल्य')}</p><p class="font-bold text-xl">₹${selectedOilseed.price.toLocaleString('en-IN')}</p></div>
-                               <div class="bg-secondary p-3 rounded-lg text-center"><p class="text-sm text-muted-foreground">${t('30 Days Later', '30 दिन बाद')}</p><p class="font-bold text-xl">₹${Math.round(selectedOilseed.price * 1.055).toLocaleString('en-IN')}</p></div>
-                           </div>
-                           <div class="bg-green-50 border border-green-200 text-green-800 p-4 rounded-lg text-center"><p class="text-2xl font-bold">▲ +5.5%</p><p class="font-semibold">${t('Price Expected to Rise', 'कीमत बढ़ने की उम्मीद')}</p><p class="text-sm mt-1">✅ ${t('Good time to sell may come', 'बेचने का अच्छा समय आ सकता है')}</p></div>
-                           <button id="get-factors-btn" class="mt-4 w-full text-primary font-semibold flex items-center justify-center gap-2">✨ ${t('Analyze Factors Affecting Price', 'मूल्य को प्रभावित करने वाले कारकों का विश्लेषण करें')}</button>
-                        `
-                    })}
-                </div>
-            </div>
-        `;
-    }
-
-    function renderContracts() {
-        return `
-            <div class="page" id="contracts">
-                 <header class="p-4 bg-primary text-primary-foreground"><h1 class="text-2xl font-bold text-center">${t('E-Contracts', 'ई-अनुबंध')}</h1><p class="text-center text-primary-foreground/80">${t('Digital Contracts - Secure and Transparent', 'डिजिटल अनुबंध - सुरक्षित और पारदर्शी')}</p></header>
-                <div class="p-4 space-y-4">
-                    <div class="grid grid-cols-3 gap-3 text-center bg-white p-4 rounded-xl shadow-sm border">
-                        <div><p class="text-sm text-muted-foreground">${t('Total', 'कुल अनुबंध')}</p><p class="text-2xl font-bold">3</p></div>
-                        <div><p class="text-sm text-muted-foreground">${t('Confirmed', 'पुष्टि')}</p><p class="text-2xl font-bold">1</p></div>
-                        <div><p class="text-sm text-muted-foreground">${t('Total Value', 'कुल मूल्य')}</p><p class="text-2xl font-bold">₹12.1L</p></div>
-                    </div>
-                     ${Card({
-                        className: 'bg-blue-50 border-blue-200',
-                        children: `
-                            <div class="flex items-center gap-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600 w-8 h-8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                                <div>
-                                    <h4 class="font-bold text-blue-900">${t('Blockchain Secured', 'ब्लॉकचेन सुरक्षित')}</h4>
-                                    <p class="text-sm text-blue-700">${t('Your contracts are immutable and transparently recorded.', 'आपके अनुबंध अपरिवर्तनीय और पारदर्शी रूप से दर्ज किए गए हैं।')}</p>
-                                </div>
-                            </div>
-                        `
-                    })}
-                    <button id="create-contract-btn" class="w-full bg-primary text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus"><path d="M5 12h14"/><path d="M12 5v14"/></svg>${t('Create New Contract', 'नया अनुबंध बनाएं')}</button>
-                    <h2 class="text-xl font-bold pt-2">${t('My Contracts', 'मेरे अनुबंध')}</h2>
-                    ${Card({
-                        children: `
-                            <div class="flex justify-between items-start">
-                               <div><p class="font-bold text-lg">AgriCorp Foods</p><p class="text-sm text-muted-foreground">${t('अनुबंध #CNT001', 'Contract #CNT001')}</p></div>
-                                <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full">${t('Confirmed', 'पुष्टि')}</span>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4 mt-4 border-t pt-4"><div><p class="text-sm text-muted-foreground">${t('Crop', 'फसल')}</p><p class="font-semibold">${t('सरसों', 'Mustard')}</p></div><div><p class="text-sm text-muted-foreground">${t('Quantity', 'मात्रा')}</p><p class="font-semibold">100 ${t('क्विंटल', 'Quintal')}</p></div><div><p class="text-sm text-muted-foreground">${t('Per Quintal', 'प्रति क्विंटल')}</p><p class="font-semibold">₹5,400</p></div><div><p class="text-sm text-muted-foreground">${t('Total Value', 'कुल मूल्य')}</p><p class="font-semibold">₹5,40,000</p></div></div>
-                            <div class="border-t mt-4 pt-4 flex justify-between items-center text-sm"><p class="text-muted-foreground">${t('Delivery: 15 मार्च, 2026', 'Delivery: 15 Mar, 2026')}</p><a href="#" class="text-primary font-semibold">${t('View Details', 'विवरण देखें')}</a></div>
-                        `
-                    })}
-                </div>
-            </div>
-        `;
-    }
-    
-    function renderLearn() {
-        return `
-             <div class="page" id="learn">
-                 <header class="p-4 bg-white border-b"><div class="flex justify-between items-center"><h1 class="text-2xl font-bold">${t('Learning Hub', 'लर्निंग हब')}</h1><div class="w-8 h-8 bg-secondary rounded-full"></div></div></header>
-                <div class="p-4 space-y-4">
-                     <div class="grid grid-cols-2 gap-4">
-                        ${Card({ className: 'text-center', children: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 mx-auto mb-2 text-primary"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" class="text-primary" /></svg><p class="font-semibold mt-1">${t('Video Lessons', 'वीडियो पाठ')}</p>`})}
-                        <div id="hedging-strategies-card" class="cursor-pointer">
-                        ${Card({ className: 'text-center h-full', children: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 mx-auto mb-2 text-primary"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><p class="font-semibold mt-1">${t('Hedging Strategies', 'हेजिंग रणनीतियाँ')}</p>`})}
-                        </div>
-                    </div>
-                     ${Card({
-                        className: 'mt-4',
-                        children: `
-                            <h2 class="text-xl font-bold">${t('Featured Video', 'विशेष रुप से प्रदर्शित वीडियो')}</h2>
-                            <div class="aspect-video bg-secondary rounded-lg flex items-center justify-center my-3"><div class="w-12 h-12 bg-black/20 rounded-full flex items-center justify-center cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="white" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg></div></div>
-                            <h3 class="font-bold text-lg">${t('Understanding Futures Trading for Farmers', 'किसानों के लिए वायदा कारोबार को समझना')}</h3>
-                            <p class="text-muted-foreground text-sm mt-1">${t('Learn how to protect your crop prices using virtual hedging techniques.', 'वर्चुअल हेजिंग तकनीकों का उपयोग करके अपनी फसल की कीमतों की रक्षा करना सीखें।')}</p>
-                        `
+                         className: 'mb-6',
+                         children: `
+                             <h3 class="font-bold mb-2">My Contracts</h3>
+                             <div class="bg-card p-3 rounded-lg border">
+                                 <div class="flex justify-between items-start mb-3">
+                                     <div>
+                                         <p class="font-bold text-lg">AgriCorp Foods</p>
+                                         <p class="text-sm text-muted-foreground">Contract #CNT001</p>
+                                     </div>
+                                     <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full">Confirmed</span>
+                                 </div>
+                                 <div class="grid grid-cols-2 gap-4">
+                                     <div>
+                                         <p class="text-sm text-muted-foreground">Crop</p>
+                                         <p class="font-semibold">Mustard</p>
+                                     </div>
+                                     <div>
+                                         <p class="text-sm text-muted-foreground">Quantity</p>
+                                         <p class="font-semibold">100 Quintal</p>
+                                     </div>
+                                     <div>
+                                         <p class="text-sm text-muted-foreground">Per Quintal</p>
+                                         <p class="font-semibold">₹5,400</p>
+                                     </div>
+                                     <div>
+                                         <p class="text-sm text-muted-foreground">Total Value</p>
+                                         <p class="font-semibold">₹5,40,000</p>
+                                     </div>
+                                 </div>
+                                 <div class="border-t mt-4 pt-4 flex justify-between items-center text-sm">
+                                     <p class="text-muted-foreground">Delivery: 15 Mar, 2026</p>
+                                     <a href="#" class="text-primary font-semibold">View Details</a>
+                                 </div>
+                             </div>
+                         `
                      })}
-                     ${Card({
-                        className: 'mt-4',
-                        children: `
-                            <h2 class="text-xl font-bold mb-2">✨ ${t('AI Kisan Dost', 'एआई किसान दोस्त')}</h2>
-                            <p class="text-muted-foreground mb-3">${t('Have a question about trading? Ask your AI friend!', 'व्यापार के बारे में कोई प्रश्न है? अपने एआई दोस्त से पूछें!')}</p>
-                            <textarea id="kisan-dost-question" class="w-full p-2 border rounded-lg bg-secondary" rows="3" placeholder="${t('e.g., What is a futures contract?', 'जैसे, वायदा अनुबंध क्या है?')}"></textarea>
-                            <button id="ask-kisan-dost-btn" class="mt-2 w-full bg-primary text-white font-semibold py-2 rounded-lg flex items-center justify-center gap-2">
-                                ${t('Ask Question', 'प्रश्न पूछें')}
-                            </button>
-                            <div id="kisan-dost-answer" class="mt-4 text-sm text-muted-foreground bg-secondary p-3 rounded-lg min-h-[4rem]">
-                                ${t('Your answer will appear here...', 'आपका उत्तर यहां दिखाई देगा...')}
-                            </div>
-                        `
-                    })}
-                </div>
-            </div>
-        `;
-    }
-
-    // --- CHART LOGIC ---
-    function generateCandlestickData(basePrice) {
-        let data = []; let price = basePrice;
-        for (let i = 0; i < 30; i++) {
-            const open = price; const close = open + (Math.random() - 0.5) * 100;
-            const high = Math.max(open, close) + Math.random() * 50; const low = Math.min(open, close) - Math.random() * 50;
-            data.push({ date: `Day ${i + 1}`, ohlc: [Math.round(open), Math.round(high), Math.round(low), Math.round(close)] });
-            price = close;
-        }
-        return data;
-    }
-
-    function renderChart() {
-        const { ResponsiveContainer, ComposedChart, XAxis, YAxis, Tooltip, Candlestick, Cell } = window.Recharts;
-        // hide the placeholder image once the chart is about to render
-        const placeholder = document.getElementById('trade-sample-img');
-        if (placeholder) placeholder.style.display = 'none';
-         const data = generateCandlestickData(selectedOilseed.price);
-         const CustomTooltip = ({ active, payload }) => {
-             if (active && payload && payload.length) {
-                 const data = payload[0].payload.ohlc;
-                 return e('div', { className: 'bg-white/80 backdrop-blur-sm p-2 border rounded-lg shadow-lg' },
-                     e('p', { className: 'font-bold' }, `O: ${data[0]} H: ${data[1]}`),
-                     e('p', { className: 'font-bold' }, `L: ${data[2]} C: ${data[3]}`)
-                 );
-             }
-             return null;
-         };
-        const chart = e(ResponsiveContainer, { width: '100%', height: '100%' },
-            e(ComposedChart, { data: data, margin: { top: 5, right: 5, left: -30, bottom: 5 } },
-                e(XAxis, { dataKey: 'date', tickLine: false, axisLine: false, tickMargin: 8 }),
-                e(YAxis, { orientation: 'left', domain: ['dataMin - 100', 'dataMax + 100'], tickLine: false, axisLine: false, tickMargin: 8 }),
-                e(Tooltip, { content: CustomTooltip, cursor: { stroke: 'hsl(var(--primary))' } }),
-                e(Candlestick, { dataKey: 'ohlc', fill: 'hsl(var(--success))', stroke: 'hsl(var(--success))', isAnimationActive: false },
-                    data.map((entry, index) => e(Cell, { key: `cell-${index}`, fill: entry.ohlc[3] >= entry.ohlc[0] ? 'hsl(var(--success))' : 'hsl(var(--destructive))' }))
-                )
-            )
-        );
-        ReactDOM.render(chart, document.getElementById('chart-container'));
-    }
-
-
-    
-    // --- PAGE RENDERING FUNCTIONS ---
-    function renderDashboard() {
-        let riskProfileHtml = `
-            <p class="text-sm text-muted-foreground">${t('Complete the assessment to find out your risk profile.', 'अपनी जोखिम प्रोफ़ाइल जानने के लिए मूल्यांकन पूरा करें।')}</p>
-            <button id="take-risk-assessment-btn" class="mt-2 w-full bg-secondary text-secondary-foreground font-semibold py-2 rounded-lg">${t('Take Risk Assessment', 'जोखिम मूल्यांकन करें')}</button>
-        `;
-
-        if (userRiskProfile) {
-            const profileColors = {
-                'Conservative': 'bg-blue-100 text-blue-800',
-                'Moderate': 'bg-yellow-100 text-yellow-800',
-                'Aggressive': 'bg-red-100 text-red-800'
-            };
-            riskProfileHtml = `
-                <div class="flex justify-between items-center">
-                    <p class="text-sm text-muted-foreground">${t('Your Profile', 'आपकी प्रोफ़ाइल')}</p>
-                    <span class="text-sm font-semibold px-2 py-1 rounded-full ${profileColors[userRiskProfile]}">${t(userRiskProfile, userRiskProfile)}</span>
-                </div>
-                <p class="text-lg font-bold mt-1">${t(userRiskProfile, userRiskProfile)}</p>
-            `;
-        }
-
-        return `
-            <div class="page p-4" id="dashboard">
-                <header class="flex justify-between items-center mb-4">
-                    <div>
-                        <h1 class="text-2xl font-bold text-foreground">Hello, Sanjay! 👋</h1>
-                        <p class="text-muted-foreground">Patna, Bihar • 28°C ☀️</p>
-                    </div>
-                    <div class="flex items-center gap-4">
-                         <div id="lang-toggle" class="cursor-pointer text-primary">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-languages"><path d="m5 8 6 6"/><path d="m4 14 6-6 2-3"/><path d="M2 5h12"/><path d="M7 2h1"/><path d="m22 22-5-10-5 10"/><path d="M14 18h6"/></svg>
-                         </div>
-                        <div class="relative">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-bell"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-                            <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-destructive rounded-full border-2 border-background"></span>
-                        </div>
-                    </div>
-                </header>
-
-                <div class="grid grid-cols-3 gap-3 mb-4 text-center">
-                    ${Card({ className: 'col-span-1', children: `<p class="text-sm text-muted-foreground">${t('Virtual Balance', 'वर्चुअल बैलेंस')}</p><p class="text-lg font-bold">₹2,50,000</p>`})}
-                    ${Card({ className: 'col-span-1', children: `<p class="text-sm text-muted-foreground">${t('Active', 'सक्रिय अनुबंध')}</p><p class="text-lg font-bold">3</p>`})}
-                    ${Card({ className: 'col-span-1', children: `<p class="text-sm text-muted-foreground">${t('Profit/Loss', 'लाभ/हानि')}</p><p class="text-lg font-bold text-success">+₹8,400</p>`})}
-                </div>
-
-                ${Card({ className: 'mb-4', children: `
-                    <h3 class="font-bold mb-2">${t('Risk Profile', 'जोखिम प्रोफ़ाइल')}</h3>
-                    ${riskProfileHtml}
-                `})}
-                
-                ${Card({
-                    className: 'mb-6',
-                    children: `
-                        <p class="font-bold mb-2">${t('Market News & Alerts', 'बाजार समाचार और अलर्ट')}</p>
-                        <div id="market-news-content" class="text-muted-foreground text-sm min-h-[4rem]">
-                           ${t('Get the latest AI-powered news affecting the oilseeds market.', 'तिलहन बाजार को प्रभावित करने वाली नवीनतम एआई-संचालित खबरें प्राप्त करें।')}
-                        </div>
-                        <button id="fetch-news-btn" class="mt-2 w-full bg-secondary text-secondary-foreground font-semibold py-2 rounded-lg flex items-center justify-center gap-2">
-                           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-newspaper"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h4"/><path d="M16 2v20"/><path d="M8 7h4"/><path d="M8 12h4"/><path d="M8 17h4"/></svg>
-                           ${t('Fetch Latest News', 'नवीनतम समाचार प्राप्त करें')}
-                        </button>
-                    `
-                })}
-
-                <div class="flex justify-between items-center mb-3">
-                    <h2 class="text-xl font-bold">${t('Today\'s Prices', 'आज की कीमतें')}</h2>
-                </div>
-                
-                <div class="space-y-3">
-                    ${oilseeds.slice(0, 3).map(seed => Card({
-                        children: `
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <p class="font-bold text-lg">${t(seed.name.en, seed.name.hi)}</p>
-                                    <p class="text-sm text-muted-foreground">${t('per Quintal', 'प्रति क्विंटल')}</p>
-                                </div>
-                                <div class="text-right">
-                                    <p class="font-bold text-lg">₹${seed.price.toLocaleString('en-IN')}</p>
-                                    <p class="text-sm font-semibold ${seed.change >= 0 ? 'text-success' : 'text-destructive'}">
-                                        ${seed.change >= 0 ? '▲' : '▼'} ${Math.abs(seed.change)}%
-                                    </p>
-                                </div>
-                            </div>
-                        `
-                    })).join('')}
-                </div>
-            </div>
-        `;
-    }
+                 </div>
+ 
+                 <div class="flex justify-between items-center mb-3">
+                     <h2 class="text-xl font-bold">${t('Today\'s Prices', 'आज की कीमतें')}</h2>
+                 </div>
+                 
+                 <div class="space-y-3">
+                     ${oilseeds.slice(0, 3).map(seed => Card({
+                         children: `
+                             <div class="flex justify-between items-center">
+                                 <div>
+                                     <p class="font-bold text-lg">${t(seed.name.en, seed.name.hi)}</p>
+                                     <p class="text-sm text-muted-foreground">${t('per Quintal', 'प्रति क्विंटल')}</p>
+                                 </div>
+                                 <div class="text-right">
+                                     <p class="font-bold text-lg">₹${seed.price.toLocaleString('en-IN')}</p>
+                                     <p class="text-sm font-semibold ${seed.change >= 0 ? 'text-success' : 'text-destructive'}">
+                                         ${seed.change >= 0 ? '▲' : '▼'} ${Math.abs(seed.change)}%
+                                     </p>
+                                 </div>
+                             </div>
+                         `
+                     })).join('')}
+                 </div>
+             </div>
+         `;
+     }
 
     function renderTrade() {
         return `
@@ -885,7 +601,7 @@
                                <div><p class="font-bold text-lg">AgriCorp Foods</p><p class="text-sm text-muted-foreground">${t('अनुबंध #CNT001', 'Contract #CNT001')}</p></div>
                                 <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full">${t('Confirmed', 'पुष्टि')}</span>
                             </div>
-                            <div class="grid grid-cols-2 gap-4 mt-4 border-t pt-4"><div><p class="text-sm text-muted-foreground">${t('Crop', 'फसल')}</p><p class="font-semibold">${t('सरसों', 'Mustard')}</p></div><div><p class="text-sm text-muted-foreground">${t('Quantity', 'मात्रा')}</p><p class="font-semibold">100 ${t('क्विंटल', 'Quintal')}</p></div><div><p class="text-sm text-muted-foreground">${t('Per Quintal', 'प्रति क्विंटल')}</p><p class="font-semibold">₹5,400</p></div><div><p class="text-sm text-muted-foreground">${t('Total Value', 'कुल मूल्य')}</p><p class="font-semibold">₹5,40,000</p></div></div>
+                            <div class="grid grid-cols-2 gap-4 mt-4 border-t pt-4"><div><p class="text-sm text-muted-foreground">${t('Crop', 'फसल')}</p><p class="font-semibold">${t('सरसों', 'Mustard')}</p></div><div><p class="text-sm text-muted-foreground">${t('Quantity', 'मात्रा')}</p><p class="font-semibold">100 ${t('क्विंटल', 'Quintal')}</p></div><div class="hidden md:block"><p class="text-sm text-muted-foreground">${t('Per Quintal', 'प्रति क्विंटल')}</p><p class="font-semibold">₹5,400</p></div><div class="hidden md:block"><p class="text-sm text-muted-foreground">${t('Total Value', 'कुल मूल्य')}</p><p class="font-semibold">₹5,40,000</p></div></div>
                             <div class="border-t mt-4 pt-4 flex justify-between items-center text-sm"><p class="text-muted-foreground">${t('Delivery: 15 मार्च, 2026', 'Delivery: 15 Mar, 2026')}</p><a href="#" class="text-primary font-semibold">${t('View Details', 'विवरण देखें')}</a></div>
                         `
                     })}
@@ -994,7 +710,7 @@
                 case 'BarChart3': return `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mb-1"><path d="M3 3v18h2V8H3zM9 13v8h2v-5H9zM15 7v14h2V7h-2zM21 11v10h2V11h-2z"/></svg>`;
                 case 'ArrowRightLeft': return `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mb-1"><path d="M17 11l4 4-4 4"/><path d="M21 15H7"/><path d="M7 13L3 9l4-4"/><path d="M3 9h14"/></svg>`;
                 case 'FileText': return `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mb-1"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h8M8 9h4"/></svg>`;
-                case 'BookOpen': return `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mb-1"><path d="M2 3v18a1 1 0 0 0 1.447.894L12 19l8.553 2.894A1 1 0 0 0 22 21V3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1z"/><path d="M12 19V5"/></svg>`;
+                case 'BookOpen': return `<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 mb-1"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`;
                 default: return '';
             }
         };
