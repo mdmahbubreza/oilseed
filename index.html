@@ -139,6 +139,39 @@
             border-color: hsl(var(--primary));
         }
 
+        /* Kisan chat styles */
+        .kisan-float-btn{
+            position: fixed;
+            width: 56px;
+            height: 56px;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: hsl(var(--primary));
+            color: white;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            z-index: 60;
+            right: 20px; /* fallback, computed with JS for perfect alignment */
+            bottom: 100px; /* fallback */
+        }
+        .kisan-chat-panel{
+            position: fixed;
+            width: 320px;
+            max-width: calc(100% - 32px);
+            z-index: 70;
+            right: 20px; /* fallback */
+            bottom: 170px; /* fallback */
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+            overflow: hidden;
+        }
+        .kisan-chat-panel.hidden{ display: none; }
+        @media (max-width: 420px){
+            .kisan-chat-panel{ width: 280px; right: 12px; bottom: 150px; }
+            .kisan-float-btn{ right: 12px; bottom: 110px; }
+        }
     </style>
     <script>
         // Tailwind Customization
@@ -200,6 +233,38 @@
         
         <!-- Toast Notification Placeholder -->
         <div id="toast-container" class="fixed top-5 right-5 z-50"></div>
+
+        <!-- Global Kisan Chat (moved here so it stays fixed inside mobile frame) -->
+        <div id="kisan-chat-root" aria-hidden="true">
+            <button id="kisan-float-btn" class="kisan-float-btn" title="${/* placeholder replaced at runtime */''}">
+                <!-- farmer icon -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c3 0 5 1.5 5 3.5S15 9 12 9s-5-2.5-5-3.5S9 2 12 2z"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6v2H4v-2z"/></svg>
+            </button>
+
+            <div id="kisan-chat-panel" class="kisan-chat-panel hidden" role="dialog" aria-label="Kisan Dost">
+                <div class="p-3 border-b flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c3 0 5 1.5 5 3.5S15 9 12 9s-5-2.5-5-3.5S9 2 12 2z"/></svg>
+                        </div>
+                        <div>
+                            <div id="kisan-title" class="font-semibold"></div>
+                            <div id="kisan-subtitle" class="text-xs text-muted-foreground"></div>
+                        </div>
+                    </div>
+                    <button id="kisan-close-btn" class="text-muted-foreground">✕</button>
+                </div>
+                <div id="kisan-messages" class="p-3 space-y-2 h-40 overflow-auto text-sm">
+                    <!-- initial greeting inserted by JS -->
+                </div>
+                <div class="p-3 border-t">
+                    <div class="flex gap-2">
+                        <input id="kisan-input" class="flex-1 p-2 border rounded" placeholder="" />
+                        <button id="kisan-send-btn" class="bg-primary text-white px-3 py-2 rounded">${/* label set at runtime */''}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Modal Placeholder -->
         <div id="modal-container"></div>
@@ -409,7 +474,7 @@
                              <div class="bg-card p-3 rounded-lg border">
                                  <div class="flex justify-between items-start mb-3">
                                      <div>
-                                         <p class="font-bold text-lg">AgriCorp Foods</p>
+                                         <p class="font-bold text-lg">${t('AgriCorp Foods','एग्रीकॉर्प फूड्स')}</p>
                                          <p class="text-sm text-muted-foreground">${t('Contract #CNT001','अनुबंध #CNT001')}</p>
                                      </div>
                                      <span class="bg-green-100 text-green-800 text-xs font-semibold px-2 py-1 rounded-full">${t('Confirmed','पुष्टि')}</span>
@@ -648,36 +713,47 @@
                             <p class="text-muted-foreground text-sm mt-1">${t('Learn how to protect your crop prices using virtual hedging techniques.', 'वर्चुअल हेजिंग तकनीकों का उपयोग करके अपनी फसल की कीमतों की रक्षा करना सीखें।')}</p>
                         `
                      })}
-                     
-                     <!-- Visual Roadmap -->
+
+                     <!-- Visual Roadmap (structural) -->
                      ${Card({
                         className: 'mt-4',
                         children: `
                             <h2 class="text-xl font-bold mb-3">${t('Learning Roadmap', 'लर्निंग रोडमैप')}</h2>
-                            <div class="space-y-3">
-                                <div class="flex items-start gap-3">
-                                    <div class="w-3 h-3 rounded-full bg-primary mt-1"></div>
+                            <div class="flex flex-col gap-4">
+                                <div class="flex items-start gap-4">
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-4 h-4 rounded-full bg-primary"></div>
+                                        <div class="w-0.5 h-full bg-border mt-2"></div>
+                                    </div>
                                     <div>
                                         <div class="font-semibold">${t('Basics of Futures', 'वायदा का परिचय')}</div>
                                         <div class="text-sm text-muted-foreground">${t('Understand contracts, lot sizes and expiry.', 'अनुबंध, लॉट साइज और समाप्ति समझें।')}</div>
                                     </div>
                                 </div>
-                                <div class="flex items-start gap-3">
-                                    <div class="w-3 h-3 rounded-full bg-primary mt-1"></div>
+                                <div class="flex items-start gap-4">
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-4 h-4 rounded-full bg-primary"></div>
+                                        <div class="w-0.5 h-full bg-border mt-2"></div>
+                                    </div>
                                     <div>
                                         <div class="font-semibold">${t('Hedging Techniques', 'हेजिंग तकनीकें')}</div>
                                         <div class="text-sm text-muted-foreground">${t('Virtual hedges and risk reduction.', 'वर्चुअल हेज और जोखिम में कमी।')}</div>
                                     </div>
                                 </div>
-                                <div class="flex items-start gap-3">
-                                    <div class="w-3 h-3 rounded-full bg-primary mt-1"></div>
+                                <div class="flex items-start gap-4">
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-4 h-4 rounded-full bg-primary"></div>
+                                        <div class="w-0.5 h-full bg-border mt-2"></div>
+                                    </div>
                                     <div>
                                         <div class="font-semibold">${t('Reading Market Depth', 'बाजार की गहराई पढ़ना')}</div>
                                         <div class="text-sm text-muted-foreground">${t('How to interpret bids and asks.', 'बोली और पूछ पढ़ना सीखें।')}</div>
                                     </div>
                                 </div>
-                                <div class="flex items-start gap-3">
-                                    <div class="w-3 h-3 rounded-full bg-primary mt-1"></div>
+                                <div class="flex items-start gap-4">
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-4 h-4 rounded-full bg-primary"></div>
+                                    </div>
                                     <div>
                                         <div class="font-semibold">${t('Placing Orders', 'ऑर्डर देना')}</div>
                                         <div class="text-sm text-muted-foreground">${t('Buy/sell and order types.', 'खरीद/बेच और ऑर्डर प्रकार।')}</div>
@@ -686,41 +762,6 @@
                             </div>
                         `
                      })}
-
-                     <!-- Floating Kisan Chat trigger (inside app frame) + hidden chat widget -->
-                     <div id="kisan-chat-root" class="relative">
-                         <!-- Floating button (positioned inside #app) -->
-                         <button id="kisan-float-btn" class="absolute bottom-20 right-4 bg-primary text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center z-40" title="${t('Kisan Dost', 'किसान दोस्त')}">
-                             <!-- farmer icon -->
-                             <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c3 0 5 1.5 5 3.5S15 9 12 9s-5-2.5-5-3.5S9 2 12 2z"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6v2H4v-2z"/></svg>
-                         </button>
-
-                         <!-- Chat panel (positioned inside #app) -->
-                         <div id="kisan-chat-panel" class="absolute bottom-4 right-4 w-80 bg-white border rounded-xl shadow-xl z-50 hidden">
-                             <div class="p-3 border-b flex items-center justify-between">
-                                 <div class="flex items-center gap-3">
-                                     <div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
-                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c3 0 5 1.5 5 3.5S15 9 12 9s-5-2.5-5-3.5S9 2 12 2z"/></svg>
-                                     </div>
-                                     <div>
-                                         <div class="font-semibold">${t('Kisan Dost', 'किसान दोस्त')}</div>
-                                         <div class="text-xs text-muted-foreground">${t('Hello — how can I help you?', 'नमस्ते — मैं आपकी कैसे मदद कर सकता हूँ?')}</div>
-                                     </div>
-                                 </div>
-                                 <button id="kisan-close-btn" class="text-muted-foreground">✕</button>
-                             </div>
-                             <div id="kisan-messages" class="p-3 space-y-2 h-40 overflow-auto text-sm">
-                                 <div class="bg-secondary p-2 rounded"><strong>${t('Kisan Dost', 'किसान दोस्त')}:</strong> ${t('Hello! How can I help you with trading today?', 'नमस्ते! मैं आज ट्रेडिंग में आपकी कैसे मदद कर सकता हूँ?')}</div>
-                             </div>
-                             <div class="p-3 border-t">
-                                 <div class="flex gap-2">
-                                     <input id="kisan-input" class="flex-1 p-2 border rounded" placeholder="${t('Ask a question...', 'एक प्रश्न पूछें...')}" />
-                                     <button id="kisan-send-btn" class="bg-primary text-white px-3 py-2 rounded">${t('Send','भेजें')}</button>
-                                 </div>
-                             </div>
-                         </div>
-                     </div>
-
                 </div>
             </div>
         `;
@@ -972,58 +1013,11 @@
         }
 
         if(activePage === 'learn') {
-             // initialize kisan chat listeners after dom is ready
-             setTimeout(() => initKisanChat(), 50);
              document.getElementById('hedging-strategies-card')?.addEventListener('click', showHedgingStrategies);
         }
-    }
 
-    function initKisanChat() {
-        // called after render -> add event listeners for chat controls
-        const floatBtn = document.getElementById('kisan-float-btn');
-        const panel = document.getElementById('kisan-chat-panel');
-        const closeBtn = document.getElementById('kisan-close-btn');
-        const sendBtn = document.getElementById('kisan-send-btn');
-        const input = document.getElementById('kisan-input');
-        const msgs = document.getElementById('kisan-messages');
-
-        if (!floatBtn || !panel) return;
-
-        floatBtn.addEventListener('click', () => {
-            panel.classList.toggle('hidden');
-            // focus input when opened
-            setTimeout(() => input?.focus(), 100);
-        });
-
-        closeBtn?.addEventListener('click', () => panel.classList.add('hidden'));
-
-        sendBtn?.addEventListener('click', async () => {
-            const text = input.value.trim();
-            if (!text) return;
-            // append user message
-            const userNode = document.createElement('div');
-            userNode.className = 'text-right';
-            userNode.innerHTML = `<div class="inline-block bg-primary text-white p-2 rounded">${text}</div>`;
-            msgs.appendChild(userNode);
-            msgs.scrollTop = msgs.scrollHeight;
-            input.value = '';
-            // minimal simulated response (replace with callGeminiAPI if desired)
-            const replyNode = document.createElement('div');
-            replyNode.className = 'bg-secondary p-2 rounded';
-            replyNode.innerHTML = `<strong>${t('Kisan Dost', 'किसान दोस्त')}:</strong> ${t('Looking into that — here is a quick tip: check nearby mandi prices and recent rain forecast.', 'उस बारे में देख रहा हूँ — एक त्वरित सुझाव: नज़दीकी मंडी की कीमतें और हालिया वर्षा पूर्वानुमान देखें।')}`;
-            setTimeout(() => {
-                msgs.appendChild(replyNode);
-                msgs.scrollTop = msgs.scrollHeight;
-            }, 600);
-        });
-
-        // allow Enter to send
-        input?.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                sendBtn?.click();
-            }
-        });
+        // initialize global kisan chat controls (safe to call multiple times)
+        setTimeout(initGlobalKisanChat, 40);
     }
 
     // --- RENDER AND INIT ---
@@ -1048,9 +1042,12 @@
             };
             attemptRenderChart();
         }
+
+        // make sure the kisan button is positioned after any DOM changes
+        setTimeout(placeKisanElements, 60);
     }
 
-    window.addEventListener('load', render);
+    window.addEventListener('load', () => { render(); placeKisanElements(); initGlobalKisanChat(); });
     </script>
 </body>
 </html>
